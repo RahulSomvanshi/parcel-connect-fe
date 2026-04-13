@@ -1,0 +1,109 @@
+.sender-dashboard { max-width: 1200px; }
+
+.dash-hero {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-container) 100%);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-8) var(--space-10);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+  margin-bottom: var(--space-8);
+}
+
+.hero-text { max-width: 480px; }
+.hero-text h1 { color: #fff; margin-bottom: var(--space-3); }
+.hero-text p { color: rgba(255,255,255,0.85); }
+
+.hero-stats { display: flex; gap: var(--space-4); }
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--space-6);
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(16px);
+  border-radius: var(--radius-xl);
+  min-width: 180px;
+}
+
+.stat-card .stat-icon { font-size: 32px; color: rgba(255,255,255,0.9); }
+.stat-number { color: #fff; }
+.stat-card .text-variant { color: rgba(255,255,255,0.7); }
+
+.dash-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-8);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-5);
+}
+
+.shipment-list { display: flex; flex-direction: column; gap: var(--space-4); }
+
+.shipment-card { cursor: pointer; }
+.shipment-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: var(--space-4); }
+.shipment-id { margin-bottom: 2px; }
+.shipment-bottom { display: flex; align-items: center; justify-content: space-between; }
+
+.map-card { padding: 0; overflow: hidden; }
+
+.map-placeholder {
+  height: 200px;
+  background: linear-gradient(135deg, var(--surface-container-high), var(--surface-container));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.map-icon { font-size: 48px; color: var(--outline); }
+
+.route-info { padding: var(--space-5); }
+
+.route-vehicle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.route-vehicle .material-icons { font-size: 24px; color: var(--tertiary); }
+
+.route-progress { margin-top: var(--space-2); }
+
+.progress-track {
+  width: 100%;
+  height: 8px;
+  background-color: var(--surface-container-highest);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: var(--space-2);
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--tertiary), var(--tertiary-container));
+  border-radius: var(--radius-full);
+  transition: width 0.6s ease;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  color: var(--on-surface-variant);
+}
+
+@media (max-width: 900px) {
+  .dash-hero { flex-direction: column; align-items: flex-start; padding: var(--space-6); }
+  .hero-stats { width: 100%; }
+  .stat-card { flex: 1; min-width: auto; }
+  .dash-grid { grid-template-columns: 1fr; }
+}

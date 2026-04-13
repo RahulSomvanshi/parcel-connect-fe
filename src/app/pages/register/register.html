@@ -1,0 +1,92 @@
+<div class="register-page">
+  <div class="register-card animate-fade-in-up">
+    <div class="register-logo">
+      <span class="material-icons logo-icon">local_shipping</span>
+      <h1 class="title-lg">KineticLink</h1>
+    </div>
+    <h2 class="headline-md">Create Your Account</h2>
+    <p class="body-md text-variant">Join our logistics ecosystem today.</p>
+
+    <form class="register-form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          <input type="text" class="form-input" placeholder="Rahul" formControlName="firstName"
+            [class.error]="registerForm.get('firstName')?.touched && registerForm.get('firstName')?.invalid">
+          <small class="error-text"
+            *ngIf="registerForm.get('firstName')?.touched && registerForm.get('firstName')?.invalid">
+            First name is required
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          <input type="text" class="form-input" placeholder="Sharma" formControlName="lastName"
+            [class.error]="registerForm.get('lastName')?.touched && registerForm.get('lastName')?.invalid">
+          <small class="error-text"
+            *ngIf="registerForm.get('lastName')?.touched && registerForm.get('lastName')?.invalid">
+            Last name is required
+          </small>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" class="form-input" placeholder="rahul@example.com" formControlName="email"
+          [class.error]="registerForm.get('email')?.touched && registerForm.get('email')?.invalid">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Phone Number</label>
+        <input type="tel" class="form-input" placeholder="+91 98765 43210" formControlName="phone"
+          [class.error]="registerForm.get('phone')?.touched && registerForm.get('phone')?.invalid">
+        <small class="error-text"
+          *ngIf="registerForm.get('phone')?.touched && registerForm.get('phone')?.errors?.['required']">
+          Phone number is required
+        </small>
+        <small class="error-text"
+          *ngIf="registerForm.get('phone')?.touched && registerForm.get('phone')?.errors?.['pattern']">
+          Enter valid 10 digit phone number
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-input" placeholder="Create a strong password" formControlName="password"
+          [class.error]="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">
+        <small class="error-text"
+          *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.errors?.['required']">
+          Password is required
+        </small>
+        <small class="error-text"
+          *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.errors?.['minlength']">
+          Minimum 6 characters required
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">I want to</label>
+        <select class="form-input form-select" formControlName="role"
+          [class.error]="registerForm.get('role')?.touched && registerForm.get('role')?.invalid">
+          <option value="">Select your role</option>
+          <option value="sender">Send Parcels</option>
+          <option value="traveller">Carry Parcels & Earn</option>
+          <option value="both">Both</option>
+        </select>
+        <small class="error-text" *ngIf="registerForm.get('role')?.touched && registerForm.get('role')?.invalid">
+          Please select a role
+        </small>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-lg btn-block" [disabled]="isLoading">
+        {{ isLoading ? 'Creating...' : 'Create Account' }}
+        <span class="material-icons">arrow_forward</span>
+      </button>
+
+    </form>
+    <p class="body-sm form-footer text-variant">
+      Already have an account? <a routerLink="/login" class="link-primary">Login</a>
+    </p>
+  </div>
+</div>

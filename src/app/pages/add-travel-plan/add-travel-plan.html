@@ -1,0 +1,123 @@
+<div class="travel-plan-page">
+  <div class="page-header animate-fade-in-up">
+    <h1 class="headline-lg">Add Travel Plan</h1>
+    <p class="body-lg text-variant">Monetize your journey by helping others transport their goods.</p>
+    <div class="header-note">
+      <span class="material-icons note-icon">info</span>
+      <p class="body-sm text-variant">Note: Ensure your luggage allows for this extra weight.</p>
+    </div>
+  </div>
+
+  <div class="travel-grid">
+    <!-- Form -->
+    <div class="travel-form-section animate-fade-in-up delay-1">
+      <section class="form-section card">
+        <h2 class="title-lg section-title">
+          <span class="material-icons section-icon">flight</span>
+          Journey Details
+        </h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Departure City</label>
+            <input type="text" class="form-input" placeholder="e.g., Mumbai">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Arrival City</label>
+            <input type="text" class="form-input" placeholder="e.g., Delhi">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Travel Date</label>
+            <input type="date" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mode of Transport</label>
+            <select class="form-input form-select">
+              <option>Flight</option>
+              <option>Train</option>
+              <option>Bus</option>
+              <option>Car</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Departure Time</label>
+            <input type="time" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Arrival Time (Est.)</label>
+            <input type="time" class="form-input">
+          </div>
+        </div>
+      </section>
+
+      <section class="form-section card">
+        <h2 class="title-lg section-title">
+          <span class="material-icons section-icon">luggage</span>
+          Luggage Space
+        </h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Available Space (kg)</label>
+            <input type="number" class="form-input" placeholder="e.g., 5">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Max Item Size</label>
+            <select class="form-input form-select">
+              <option>Small (fits in backpack)</option>
+              <option>Medium (carry-on size)</option>
+              <option>Large (check-in luggage)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Item Restrictions</label>
+          <textarea class="form-input form-textarea" rows="3" placeholder="e.g., No liquids, no food items..."></textarea>
+        </div>
+        <button class="btn btn-primary btn-lg btn-block" style="margin-top:var(--space-4)">
+          <span class="material-icons">check_circle</span>
+          Publish Travel Plan
+        </button>
+      </section>
+    </div>
+
+    <!-- Info Cards -->
+    <div class="info-column animate-fade-in-up delay-2">
+      <div class="info-card card card-elevated">
+        <div class="info-icon-circle earnings">
+          <span class="material-icons">payments</span>
+        </div>
+        <h3 class="title-md">Earn as you travel</h3>
+        <p class="body-md text-variant">Average travelers earn up to <strong class="text-primary">₹2,500</strong> per intercity trip by carrying parcels.</p>
+      </div>
+
+      <div class="info-card card card-elevated">
+        <div class="info-icon-circle security">
+          <span class="material-icons">shield</span>
+        </div>
+        <h3 class="title-md">Verified & Secure</h3>
+        <p class="body-md text-variant">All parcels are pre-scanned and sender identities are verified for your safety.</p>
+      </div>
+
+      <div class="info-card card">
+        <h4 class="title-sm" style="margin-bottom:var(--space-4)">How it Works</h4>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <p class="body-sm">Add your travel plan with available space</p>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <p class="body-sm">Get matched with parcels on your route</p>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <p class="body-sm">Pick up, deliver, and earn rewards</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

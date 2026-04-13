@@ -1,0 +1,117 @@
+<div class="traveller-dashboard">
+  <!-- Hero -->
+  <section class="dash-hero animate-fade-in-up">
+    <div class="hero-text">
+      <h1 class="headline-lg">Traveller Hub</h1>
+      <p class="body-lg">Turn your spare luggage space into earnings.</p>
+    </div>
+    <div class="hero-stats-row">
+      <div class="stat-pill">
+        <p class="title-lg stat-val">24</p>
+        <p class="label-sm">SUCCESSFUL DELIVERIES</p>
+      </div>
+      <div class="stat-pill">
+        <p class="title-lg stat-val">03</p>
+        <p class="label-sm">UPCOMING TRIPS</p>
+      </div>
+      <div class="stat-pill accent">
+        <p class="title-lg stat-val">₹42,850</p>
+        <p class="label-sm">VERIFIED EARNINGS</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="dash-grid">
+    <!-- Upcoming Journeys -->
+    <section class="dash-section animate-fade-in-up delay-1">
+      <div class="section-header">
+        <h2 class="title-lg">Upcoming Journeys</h2>
+        <button class="btn btn-primary btn-sm" routerLink="/dashboard/add-travel-plan">
+          <span class="material-icons" style="font-size:18px">add</span>
+          Add Trip
+        </button>
+      </div>
+      <div class="journey-list">
+        @for (j of journeys; track j.from) {
+          <div class="journey-card card">
+            <div class="journey-route">
+              <div class="route-point">
+                <span class="label-sm text-variant">From</span>
+                <p class="title-sm">{{ j.from }}</p>
+              </div>
+              <div class="route-arrow">
+                <span class="material-icons">{{ j.icon }}</span>
+                <div class="route-line"></div>
+              </div>
+              <div class="route-point">
+                <span class="label-sm text-variant">To</span>
+                <p class="title-sm">{{ j.to }}</p>
+              </div>
+            </div>
+            <div class="journey-meta">
+              <span class="body-sm text-variant">{{ j.date }}</span>
+              <span class="chip chip-primary">{{ j.status }}</span>
+            </div>
+          </div>
+        }
+        <div class="journey-cta card">
+          <span class="material-icons cta-icon">luggage</span>
+          <p class="body-md text-variant">Add space details to start matching with parcels.</p>
+          <button class="btn btn-secondary btn-sm" routerLink="/dashboard/add-travel-plan">Configure Space</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Suggested Matches -->
+    <section class="dash-section animate-fade-in-up delay-2">
+      <div class="section-header">
+        <h2 class="title-lg">Suggested Matches</h2>
+        <a routerLink="/dashboard/matching-parcels" class="btn btn-tertiary btn-sm">View All →</a>
+      </div>
+      <div class="match-card card card-elevated">
+        <div class="match-header">
+          <div class="match-icon-circle">
+            <span class="material-icons">inventory_2</span>
+          </div>
+          <div>
+            <h3 class="title-md">{{ suggestedMatch.title }}</h3>
+            <p class="body-sm text-variant">Est. Payout: <strong class="text-primary">{{ suggestedMatch.payout }}</strong></p>
+          </div>
+        </div>
+        <div class="match-demand">
+          <span class="material-icons demand-icon">trending_up</span>
+          <div>
+            <p class="label-lg">Live Route Demand</p>
+            <p class="body-sm text-variant">{{ suggestedMatch.requests }} active requests on {{ suggestedMatch.route }}</p>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-block" routerLink="/dashboard/matching-parcels">
+          View Matching Parcels
+          <span class="material-icons">arrow_forward</span>
+        </button>
+      </div>
+
+      <!-- Earnings Summary -->
+      <div class="earnings-card card" style="margin-top: var(--space-5)">
+        <h3 class="title-md" style="margin-bottom: var(--space-4)">Earnings Overview</h3>
+        <div class="earnings-bars">
+          <div class="earnings-row">
+            <span class="body-sm">This Month</span>
+            <div class="bar-track"><div class="bar-fill" style="width:75%"></div></div>
+            <span class="label-lg">₹18,200</span>
+          </div>
+          <div class="earnings-row">
+            <span class="body-sm">Last Month</span>
+            <div class="bar-track"><div class="bar-fill secondary" style="width:60%"></div></div>
+            <span class="label-lg">₹14,650</span>
+          </div>
+          <div class="earnings-row">
+            <span class="body-sm">Pending</span>
+            <div class="bar-track"><div class="bar-fill tertiary" style="width:25%"></div></div>
+            <span class="label-lg">₹10,000</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

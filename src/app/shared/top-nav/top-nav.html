@@ -1,0 +1,25 @@
+<header class="top-nav">
+  <div class="top-nav-left">
+    @if (showBreadcrumb && breadcrumbs.length) {
+      <nav class="breadcrumbs">
+        @for (crumb of breadcrumbs; track crumb.label; let last = $last) {
+          @if (crumb.link && !last) {
+            <a [routerLink]="crumb.link" class="breadcrumb-link">{{ crumb.label }}</a>
+            <span class="material-icons breadcrumb-sep">chevron_right</span>
+          } @else {
+            <span class="breadcrumb-current">{{ crumb.label }}</span>
+          }
+        }
+      </nav>
+    }
+  </div>
+  <div class="top-nav-right">
+    <button class="icon-btn" title="Notifications">
+      <span class="material-icons">notifications_none</span>
+      <span class="notification-dot"></span>
+    </button>
+    <button class="icon-btn" title="Search">
+      <span class="material-icons">search</span>
+    </button>
+  </div>
+</header>

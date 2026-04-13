@@ -1,0 +1,83 @@
+.travel-plan-page { max-width: 1200px; }
+.page-header { margin-bottom: var(--space-8); }
+.page-header h1 { margin-bottom: var(--space-2); }
+
+.header-note {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--primary-fixed);
+  border-radius: var(--radius-xl);
+  width: fit-content;
+}
+
+.note-icon { font-size: 18px; color: var(--primary); }
+
+.travel-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: var(--space-8); align-items: start; }
+.travel-form-section { display: flex; flex-direction: column; gap: var(--space-6); }
+
+.form-section { padding: var(--space-8); }
+
+.section-title { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-6); }
+.section-icon { font-size: 24px; color: var(--primary); }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-bottom: var(--space-4); }
+.form-row:last-child { margin-bottom: 0; }
+
+.form-textarea { resize: vertical; min-height: 80px; font-family: var(--font-body); }
+
+.info-column { position: sticky; top: 80px; display: flex; flex-direction: column; gap: var(--space-5); }
+
+.info-card { padding: var(--space-6); }
+
+.info-icon-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-4);
+}
+
+.info-icon-circle.earnings {
+  background: linear-gradient(135deg, var(--primary-fixed), var(--primary-fixed-dim));
+}
+
+.info-icon-circle.earnings .material-icons { color: var(--primary); font-size: 24px; }
+
+.info-icon-circle.security {
+  background: linear-gradient(135deg, rgba(93, 200, 73, 0.2), rgba(5, 110, 0, 0.15));
+}
+
+.info-icon-circle.security .material-icons { color: var(--tertiary); font-size: 24px; }
+
+.info-card h3 { margin-bottom: var(--space-3); }
+
+.steps { display: flex; flex-direction: column; gap: var(--space-4); }
+
+.step { display: flex; align-items: flex-start; gap: var(--space-3); }
+
+.step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--primary), var(--primary-container));
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+  .travel-grid { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .info-column { position: static; }
+  .form-section { padding: var(--space-5); }
+}

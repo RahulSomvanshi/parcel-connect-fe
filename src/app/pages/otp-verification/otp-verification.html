@@ -1,0 +1,75 @@
+<div class="otp-page">
+  <div class="otp-grid">
+    <div class="otp-visual">
+      <div class="visual-content animate-fade-in-up">
+        <span class="material-icons shield-icon">verified_user</span>
+        <h2 class="display-sm visual-title">Secure Access to<br>Your Logistics.</h2>
+        <p class="body-lg visual-sub">Verify your identity to manage your shipments, track parcels, and access your
+          sender dashboard securely.</p>
+      </div>
+      <div class="hero-decoration">
+        <div class="deco-circle deco-circle-1"></div>
+        <div class="deco-circle deco-circle-2"></div>
+      </div>
+    </div>
+
+    <div class="otp-form-panel">
+      <div class="otp-card animate-slide-right">
+        <div class="otp-icon-header">
+          <div class="otp-icon-circle">
+            <span class="material-icons">sms</span>
+          </div>
+        </div>
+        <h2 class="headline-md">Verify OTP</h2>
+        <p class="body-md text-variant">We've sent a 6-digit verification code to<br><strong>+91 •••••• 4829</strong>
+        </p>
+
+        <div class="otp-inputs">
+          <input type="text" maxlength="1" class="otp-digit" [(ngModel)]="otp[0]" (input)="onInput($event,0)"
+            (keydown.backspace)="onBackspace($event,0)" autofocus>
+
+          <input type="text" maxlength="1" class="otp-digit" [(ngModel)]="otp[1]" (input)="onInput($event,1)"
+            (keydown.backspace)="onBackspace($event,1)">
+
+          <input type="text" maxlength="1" class="otp-digit" [(ngModel)]="otp[2]" (input)="onInput($event,2)"
+            (keydown.backspace)="onBackspace($event,2)">
+
+          <input type="text" maxlength="1" class="otp-digit" [(ngModel)]="otp[3]" (input)="onInput($event,3)"
+            (keydown.backspace)="onBackspace($event,3)">
+
+          <input type="text" maxlength="1" class="otp-digit" [(ngModel)]="otp[4]" (input)="onInput($event,4)"
+            (keydown.backspace)="onBackspace($event,4)">
+
+          <input type="text" maxlength="1" class="otp-digit" [(ngModel)]="otp[5]" (input)="onInput($event,5)"
+            (keydown.backspace)="onBackspace($event,5)">
+        </div>
+
+        <div class="otp-timer">
+          <span class="material-icons timer-icon">schedule</span>
+
+          <span *ngIf="!isResendEnabled" class="body-sm text-variant">
+            Resend code in {{ formattedTimer }}
+          </span>
+
+          <button *ngIf="isResendEnabled" class="btn btn-text" (click)="resendOtp()">
+            Resend OTP
+          </button>
+        </div>
+
+        <button type="button" class="btn btn-primary btn-lg btn-block" (click)="verifyOtp()" [disabled]="isLoading">
+          {{ isLoading ? 'Verifying...' : 'Verify & Continue' }}
+          <span class="material-icons">arrow_forward</span>
+        </button>
+
+        <div class="otp-footer">
+          <a routerLink="/login" class="body-sm link-primary">← Back to Login</a>
+          <div class="otp-links">
+            <a routerLink="/landing" class="body-sm text-variant">Privacy Policy</a>
+            <span class="body-sm text-variant">•</span>
+            <a routerLink="/landing" class="body-sm text-variant">Support</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

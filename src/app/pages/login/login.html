@@ -1,0 +1,94 @@
+<div class="login-page">
+  <div class="login-grid">
+    <!-- Left Visual -->
+    <div class="login-visual">
+      <div class="visual-content animate-fade-in-up">
+        <div class="visual-logo">
+          <span class="material-icons">local_shipping</span>
+          <h1 class="hero-brand">KineticLink</h1>
+        </div>
+        <p class="body-lg visual-tagline">Reliable logistics for a moving India</p>
+        <div class="visual-illustration">
+          <div class="illustration-track">
+            <div class="track-dot active"></div>
+            <div class="track-line"></div>
+            <div class="track-dot"></div>
+            <div class="track-line"></div>
+            <div class="track-dot"></div>
+          </div>
+          <div class="illustration-labels">
+            <span class="label-sm">PICKUP</span>
+            <span class="label-sm">IN TRANSIT</span>
+            <span class="label-sm">DELIVERED</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-decoration">
+        <div class="deco-circle deco-circle-1"></div>
+        <div class="deco-circle deco-circle-2"></div>
+      </div>
+    </div>
+
+    <!-- Right Login Form -->
+    <div class="login-form-panel">
+      <div class="form-card animate-slide-right">
+        <h2 class="headline-md">Welcome back</h2>
+        <p class="body-md text-variant">Please enter your details to sign in</p>
+
+        <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+          <!-- Identifier -->
+          <div class="form-group">
+            <label class="form-label">Email or Phone</label>
+            <input type="text" class="form-input" placeholder="Enter your email or phone" formControlName="identifier"
+              [class.error]="loginForm.get('identifier')?.touched && loginForm.get('identifier')?.invalid">
+            <small class="error-text"
+              *ngIf="loginForm.get('identifier')?.touched && loginForm.get('identifier')?.invalid">
+              Required
+            </small>
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-input" placeholder="Enter your password" formControlName="password"
+              [class.error]="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+            <small class="error-text" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+              Password is required
+            </small>
+          </div>
+
+          <!-- Actions -->
+          <div class="form-actions-row">
+            <label class="checkbox-label">
+              <input type="checkbox" class="checkbox">
+              <span class="body-sm">Remember me</span>
+            </label>
+
+            <a routerLink="/forgot-password" class="body-sm link-primary">
+              Forgot password?
+            </a>
+          </div>
+
+          <!-- LOGIN BUTTON -->
+          <button type="submit" class="btn btn-primary btn-lg btn-block" [disabled]="isLoading">
+            {{ isLoading ? 'Signing in...' : 'Sign In' }}
+            <span class="material-icons">arrow_forward</span>
+          </button>
+
+          <!-- OTP LOGIN -->
+          <button type="button" class="btn btn-secondary btn-lg btn-block" routerLink="/otp-verification">
+            Login with OTP instead
+            <span class="material-icons">sms</span>
+          </button>
+
+        </form>
+
+        <p class="body-sm form-footer text-variant">
+          Don't have an account? <a routerLink="/register" class="link-primary">Register</a>
+        </p>
+        <p class="body-sm footer-legal text-variant">Powered by KineticLink India © 2024</p>
+      </div>
+    </div>
+  </div>
+</div>

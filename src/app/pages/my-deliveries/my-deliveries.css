@@ -1,0 +1,67 @@
+.deliveries-page { max-width: 1200px; }
+.page-header { margin-bottom: var(--space-8); }
+.page-header h1 { margin-bottom: var(--space-2); }
+
+.deliveries-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: var(--space-8); align-items: start; }
+.deliveries-list { display: flex; flex-direction: column; gap: var(--space-5); }
+
+.delivery-card { padding: var(--space-6); opacity: 0; animation: fadeInUp 0.5s ease forwards; }
+.delivery-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: var(--space-5); }
+
+.delivery-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background-color: var(--surface-container-low);
+  border-radius: var(--radius-xl);
+  margin-bottom: var(--space-5);
+}
+
+.detail-group { display: flex; gap: var(--space-3); }
+.detail-icon { font-size: 20px; color: var(--primary); margin-top: 2px; }
+
+.delivery-route { margin-bottom: var(--space-5); padding-left: var(--space-2); }
+.route-node { display: flex; align-items: flex-start; gap: var(--space-3); }
+.route-dot { font-size: 16px; color: var(--primary); margin-top: 3px; }
+.route-dot.destination { color: var(--tertiary); }
+.route-line-vertical { width: 2px; height: 20px; background: var(--outline-variant); margin-left: 7px; }
+
+.delivery-actions { display: flex; gap: var(--space-3); }
+
+.impact-panel { position: sticky; top: 80px; }
+.impact-card { padding: var(--space-8); text-align: center; }
+
+.impact-icon-circle {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--primary-fixed), var(--primary-fixed-dim));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-5);
+}
+
+.impact-icon-circle .material-icons { font-size: 30px; color: var(--primary); }
+
+.impact-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.impact-stat {
+  padding: var(--space-4);
+  background-color: var(--surface-container-low);
+  border-radius: var(--radius-xl);
+}
+
+.progress-track { width: 100%; height: 8px; background-color: var(--surface-container-highest); border-radius: var(--radius-full); overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--tertiary), var(--tertiary-container)); border-radius: var(--radius-full); }
+
+@media (max-width: 900px) {
+  .deliveries-grid { grid-template-columns: 1fr; }
+  .delivery-details { grid-template-columns: 1fr; }
+  .impact-panel { position: static; }
+}
