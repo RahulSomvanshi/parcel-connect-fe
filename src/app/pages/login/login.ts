@@ -42,19 +42,21 @@ export class Login {
     };
 
     this.authService.login(payload).subscribe({
-      next: (res: any) => {
+      next: () => {
         this.isLoading = false;
 
-        // 🔥 if not verified → OTP
-        if (!res.user?.isVerified) {
+        // ✅ Use auth service state (storeAuth already ran in tap)
+        // This handles cases where backend may not return user object
+        if (!this.authService.isVerified) {
+          const user = this.authService.currentUser;
           this.router.navigate(['/otp-verification'], {
-            state: { phone: res.user.phone }
+            state: { phone: user?.phone || payload.phone, role: user?.role }
           });
           return;
         }
 
-        // 🔥 else dashboard
-        this.router.navigate([this.authService.getDashboardRoute()]);
+        // ✅ Verified user → go to dashboard
+        this.router.navigate(['/dashboard']);
       },
 
       error: (err) => {

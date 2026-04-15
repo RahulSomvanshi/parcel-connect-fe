@@ -23,12 +23,13 @@ export class OtpVerification implements OnInit, OnDestroy {
     private router: Router
   ) { }
   ngOnDestroy(): void {
-    throw new Error('Method not implemented.');
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
   }
 
   ngOnInit() {
-    const nav = this.router.getCurrentNavigation();
-    this.phone = nav?.extras?.state?.['phone'] || '';
+    this.phone = window.history.state?.phone || '';
 
     this.startTimer();
   }
@@ -84,7 +85,7 @@ export class OtpVerification implements OnInit, OnDestroy {
     }).subscribe({
       next: () => {
         this.isLoading = false;
-        this.router.navigate(['/dashboard/sender']);
+        this.router.navigate([this.authService.getDashboardRoute()]);
       },
       error: (err) => {
         this.isLoading = false;

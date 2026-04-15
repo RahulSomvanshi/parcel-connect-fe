@@ -3,7 +3,7 @@
     <div class="logo-mark">
       <span class="material-icons logo-icon">local_shipping</span>
     </div>
-    <h2 class="logo-text">KineticLink</h2>
+    <h2 class="logo-text">ParcelConnect</h2>
   </div>
 
   <div class="sidebar-user">
@@ -12,11 +12,30 @@
     </div>
     <div class="user-info">
       <p class="user-greeting label-sm">Welcome back</p>
-      <p class="user-type title-sm">{{ userType === 'sender' ? 'Sender' : 'Traveller' }} Account</p>
+      <p class="user-type title-sm">{{ userName }}</p>
     </div>
   </div>
 
+  <!-- Mode Switcher -->
+  <div class="mode-switcher">
+    <a routerLink="/dashboard/sender"
+       class="mode-btn"
+       [class.active]="userType === 'sender'">
+      <span class="material-icons">inventory_2</span>
+      Sender
+    </a>
+    <a routerLink="/dashboard/traveller"
+       class="mode-btn"
+       [class.active]="userType === 'traveller'">
+      <span class="material-icons">flight</span>
+      Traveller
+    </a>
+  </div>
+
   <nav class="sidebar-nav">
+    <p class="nav-section-label label-sm">
+      {{ userType === 'sender' ? 'SENDER MENU' : 'TRAVELLER MENU' }}
+    </p>
     @for (link of links; track link.path) {
       <a
         [routerLink]="link.path"
@@ -31,17 +50,9 @@
   </nav>
 
   <div class="sidebar-footer">
-    <a routerLink="/dashboard/sender" class="nav-link" [class.active]="userType === 'sender'">
-      <span class="material-icons nav-icon">person</span>
-      <span class="nav-label">Sender Mode</span>
-    </a>
-    <a routerLink="/dashboard/traveller" class="nav-link" [class.active]="userType === 'traveller'">
-      <span class="material-icons nav-icon">flight</span>
-      <span class="nav-label">Traveller Mode</span>
-    </a>
-    <a routerLink="/login" class="nav-link nav-link-settings">
-      <span class="material-icons nav-icon">settings</span>
-      <span class="nav-label">Settings</span>
+    <a (click)="logout()" class="nav-link nav-link-logout">
+      <span class="material-icons nav-icon">logout</span>
+      <span class="nav-label">Logout</span>
     </a>
   </div>
 </aside>

@@ -6,14 +6,14 @@
 
   <div class="deliveries-grid">
     <div class="deliveries-list">
-      @for (d of deliveries; track d.id; let i = $index) {
+      @for (d of deliveries$ | async; track d._id; let i = $index) {
         <div class="delivery-card card animate-fade-in-up" [style.animation-delay]="((i + 1) * 0.12) + 's'">
           <div class="delivery-header">
             <div>
-              <h3 class="title-md">{{ d.title }}</h3>
-              <p class="body-sm text-variant">ID: #{{ d.id }}</p>
+              <h3 class="title-md">{{ d.description || 'Parcel' }}</h3>
+              <p class="body-sm text-variant">ID: #{{ d._id }}</p>
             </div>
-            <span class="chip" [class]="'chip-' + d.statusType">{{ d.status }}</span>
+            <span class="chip" [class]="'chip-' + getStatusType(d.status)">{{ d.status }}</span>
           </div>
 
           <div class="delivery-details">
@@ -21,16 +21,16 @@
               <span class="material-icons detail-icon">person</span>
               <div>
                 <p class="label-sm text-variant">SENDER</p>
-                <p class="body-md">{{ d.sender }}</p>
-                <p class="body-sm text-variant">{{ d.phone }}</p>
+                <p class="body-md">{{ getSenderName(d.sender) }}</p>
+                <p class="body-sm text-variant">{{ getSenderPhone(d.sender) || 'N/A' }}</p>
               </div>
             </div>
             <div class="detail-group">
               <span class="material-icons detail-icon">event</span>
               <div>
-                <p class="label-sm text-variant">SCHEDULE</p>
-                <p class="body-md">{{ d.date }}</p>
-                <p class="body-sm text-variant">{{ d.time }}</p>
+                <p class="label-sm text-variant">CREATED</p>
+                <p class="body-md">{{ d.createdAt | date:'mediumDate' }}</p>
+                <p class="body-sm text-variant">{{ d.createdAt | date:'shortTime' }}</p>
               </div>
             </div>
           </div>
@@ -40,7 +40,7 @@
               <span class="material-icons route-dot">radio_button_checked</span>
               <div>
                 <p class="label-sm text-variant">FROM</p>
-                <p class="body-md">{{ d.from }}</p>
+                <p class="body-md">{{ d.pickup.city }}, {{ d.pickup.address }}</p>
               </div>
             </div>
             <div class="route-line-vertical"></div>
@@ -48,14 +48,20 @@
               <span class="material-icons route-dot destination">location_on</span>
               <div>
                 <p class="label-sm text-variant">TO</p>
-                <p class="body-md">{{ d.to }}</p>
+                <p class="body-md">{{ d.drop.city }}, {{ d.drop.address }}</p>
               </div>
             </div>
           </div>
 
           <div class="delivery-actions">
-            <button class="btn btn-primary btn-sm">Update Status</button>
-            <button class="btn btn-secondary btn-sm">Contact Sender</button>
+            <button
+              class="btn btn-primary btn-sm"
+              (click)="deliverParcel(d._id!)"
+              [disabled]="!canDeliver(d.status)"
+            >
+              {{ getDeliverButtonText(d.status) }}
+            </button>
+            <a class="btn btn-secondary btn-sm" [href]="'tel:' + getSenderPhone(d.sender)" *ngIf="getSenderPhone(d.sender)">Contact Sender</a>
           </div>
         </div>
       }

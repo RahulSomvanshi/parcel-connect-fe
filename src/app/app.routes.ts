@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard, guestGuard, senderGuard, travellerGuard } from './core/guards/auth.guard';
+import { authGuard, guestGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -31,6 +31,8 @@ export const routes: Routes = [
   },
 
   // ── Protected Dashboard Routes ──
+  // All routes accessible to any authenticated user (user/admin)
+  // Users can switch between Sender and Traveller modes freely
   {
     path: 'dashboard',
     canActivate: [authGuard],
@@ -41,10 +43,9 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'sender', pathMatch: 'full' },
 
-      // Sender routes
+      // ── Sender Mode ──
       {
         path: 'sender',
-        canActivate: [senderGuard],
         loadComponent: () =>
           import('./pages/sender-dashboard/sender-dashboard').then(
             (m) => m.SenderDashboard
@@ -52,7 +53,6 @@ export const routes: Routes = [
       },
       {
         path: 'create-parcel',
-        canActivate: [senderGuard],
         loadComponent: () =>
           import('./pages/create-parcel/create-parcel').then(
             (m) => m.CreateParcel
@@ -60,15 +60,13 @@ export const routes: Routes = [
       },
       {
         path: 'my-parcels',
-        canActivate: [senderGuard],
         loadComponent: () =>
           import('./pages/my-parcels/my-parcels').then((m) => m.MyParcels),
       },
 
-      // Traveller routes
+      // ── Traveller Mode ──
       {
         path: 'traveller',
-        canActivate: [travellerGuard],
         loadComponent: () =>
           import('./pages/traveller-dashboard/traveller-dashboard').then(
             (m) => m.TravellerDashboard
@@ -76,7 +74,6 @@ export const routes: Routes = [
       },
       {
         path: 'matching-parcels',
-        canActivate: [travellerGuard],
         loadComponent: () =>
           import('./pages/matching-parcels/matching-parcels').then(
             (m) => m.MatchingParcels
@@ -91,7 +88,6 @@ export const routes: Routes = [
       },
       {
         path: 'add-travel-plan',
-        canActivate: [travellerGuard],
         loadComponent: () =>
           import('./pages/add-travel-plan/add-travel-plan').then(
             (m) => m.AddTravelPlan
@@ -99,5 +95,8 @@ export const routes: Routes = [
       },
     ],
   },
-  { path: '**', redirectTo: '/login' },
+  {
+    path: '**',
+    redirectTo: '/login',
+  },
 ];

@@ -35,37 +35,7 @@ export const guestGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
 
   if (authService.isLoggedIn && authService.isVerified) {
-    router.navigate([authService.getDashboardRoute()]);
-    return false;
-  }
-
-  return true;
-};
-
-/**
- * Role-based guard for sender-only routes.
- */
-export const senderGuard: CanActivateFn = (route, state) => {
-  const authService = inject(AuthService);
-  const router = inject(Router);
-
-  if (authService.userRole === 'traveller') {
-    router.navigate(['/dashboard/traveller']);
-    return false;
-  }
-
-  return true;
-};
-
-/**
- * Role-based guard for traveller-only routes.
- */
-export const travellerGuard: CanActivateFn = (route, state) => {
-  const authService = inject(AuthService);
-  const router = inject(Router);
-
-  if (authService.userRole === 'sender') {
-    router.navigate(['/dashboard/sender']);
+    router.navigate(['/dashboard']);
     return false;
   }
 

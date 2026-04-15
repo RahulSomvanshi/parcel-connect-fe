@@ -11,76 +11,77 @@
   <div class="travel-grid">
     <!-- Form -->
     <div class="travel-form-section animate-fade-in-up delay-1">
-      <section class="form-section card">
-        <h2 class="title-lg section-title">
-          <span class="material-icons section-icon">flight</span>
-          Journey Details
-        </h2>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Departure City</label>
-            <input type="text" class="form-input" placeholder="e.g., Mumbai">
+      <form [formGroup]="travelPlanForm" (ngSubmit)="onSubmit()">
+        <section class="form-section card">
+          <h2 class="title-lg section-title">
+            <span class="material-icons section-icon">flight</span>
+            Journey Details
+          </h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Departure City</label>
+              <input type="text" class="form-input" placeholder="e.g., Mumbai" formControlName="from">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Arrival City</label>
+              <input type="text" class="form-input" placeholder="e.g., Delhi" formControlName="to">
+            </div>
           </div>
-          <div class="form-group">
-            <label class="form-label">Arrival City</label>
-            <input type="text" class="form-input" placeholder="e.g., Delhi">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Travel Date</label>
+              <input type="date" class="form-input" formControlName="travelDate">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Mode of Transport</label>
+              <select class="form-input form-select" formControlName="vehicleType">
+                <option value="bus">Bus</option>
+                <option value="train">Train</option>
+                <option value="car">Car</option>
+              </select>
+            </div>
           </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Travel Date</label>
-            <input type="date" class="form-input">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Departure Time</label>
+              <input type="time" class="form-input" formControlName="departureTime">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Arrival Time (Est.)</label>
+              <input type="time" class="form-input" formControlName="arrivalTime">
+            </div>
           </div>
-          <div class="form-group">
-            <label class="form-label">Mode of Transport</label>
-            <select class="form-input form-select">
-              <option>Flight</option>
-              <option>Train</option>
-              <option>Bus</option>
-              <option>Car</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Departure Time</label>
-            <input type="time" class="form-input">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Arrival Time (Est.)</label>
-            <input type="time" class="form-input">
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <section class="form-section card">
-        <h2 class="title-lg section-title">
-          <span class="material-icons section-icon">luggage</span>
-          Luggage Space
-        </h2>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Available Space (kg)</label>
-            <input type="number" class="form-input" placeholder="e.g., 5">
+        <section class="form-section card">
+          <h2 class="title-lg section-title">
+            <span class="material-icons section-icon">luggage</span>
+            Luggage Space
+          </h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Available Space (kg)</label>
+              <input type="number" class="form-input" placeholder="e.g., 5" formControlName="availableWeight">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Max Item Size</label>
+              <select class="form-input form-select" formControlName="maxItemSize">
+                <option value="small">Small (fits in backpack)</option>
+                <option value="medium">Medium (carry-on size)</option>
+                <option value="large">Large (check-in luggage)</option>
+              </select>
+            </div>
           </div>
           <div class="form-group">
-            <label class="form-label">Max Item Size</label>
-            <select class="form-input form-select">
-              <option>Small (fits in backpack)</option>
-              <option>Medium (carry-on size)</option>
-              <option>Large (check-in luggage)</option>
-            </select>
+            <label class="form-label">Item Restrictions</label>
+            <textarea class="form-input form-textarea" rows="3" placeholder="e.g., No liquids, no food items..." formControlName="restrictions"></textarea>
           </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Item Restrictions</label>
-          <textarea class="form-input form-textarea" rows="3" placeholder="e.g., No liquids, no food items..."></textarea>
-        </div>
-        <button class="btn btn-primary btn-lg btn-block" style="margin-top:var(--space-4)">
-          <span class="material-icons">check_circle</span>
-          Publish Travel Plan
-        </button>
-      </section>
+          <button type="submit" class="btn btn-primary btn-lg btn-block" style="margin-top:var(--space-4)" [disabled]="travelPlanForm.invalid">
+            <span class="material-icons">check_circle</span>
+            Publish Travel Plan
+          </button>
+        </section>
+      </form>
     </div>
 
     <!-- Info Cards -->

@@ -22,42 +22,41 @@
   </section>
 
   <div class="dash-grid">
-    <!-- Upcoming Journeys -->
+    <!-- Your Deliveries -->
     <section class="dash-section animate-fade-in-up delay-1">
       <div class="section-header">
-        <h2 class="title-lg">Upcoming Journeys</h2>
-        <button class="btn btn-primary btn-sm" routerLink="/dashboard/add-travel-plan">
-          <span class="material-icons" style="font-size:18px">add</span>
-          Add Trip
-        </button>
+        <h2 class="title-lg">Your Deliveries</h2>
+        <a routerLink="/dashboard/my-deliveries" class="btn btn-tertiary btn-sm">View All →</a>
       </div>
       <div class="journey-list">
-        @for (j of journeys; track j.from) {
-          <div class="journey-card card">
-            <div class="journey-route">
-              <div class="route-point">
-                <span class="label-sm text-variant">From</span>
-                <p class="title-sm">{{ j.from }}</p>
+        @for (d of deliveries$ | async; track d._id; let i = $index) {
+          @if (i < 2) {
+            <div class="journey-card card">
+              <div class="journey-route">
+                <div class="route-point">
+                  <span class="label-sm text-variant">From</span>
+                  <p class="title-sm">{{ d.pickup.city }}</p>
+                </div>
+                <div class="route-arrow">
+                  <span class="material-icons">local_shipping</span>
+                  <div class="route-line"></div>
+                </div>
+                <div class="route-point">
+                  <span class="label-sm text-variant">To</span>
+                  <p class="title-sm">{{ d.drop.city }}</p>
+                </div>
               </div>
-              <div class="route-arrow">
-                <span class="material-icons">{{ j.icon }}</span>
-                <div class="route-line"></div>
-              </div>
-              <div class="route-point">
-                <span class="label-sm text-variant">To</span>
-                <p class="title-sm">{{ j.to }}</p>
+              <div class="journey-meta">
+                <span class="body-sm text-variant">{{ d.description || 'Parcel' }}</span>
+                <span class="chip" [class]="'chip-' + getStatusType(d.status)">{{ d.status }}</span>
               </div>
             </div>
-            <div class="journey-meta">
-              <span class="body-sm text-variant">{{ j.date }}</span>
-              <span class="chip chip-primary">{{ j.status }}</span>
-            </div>
-          </div>
+          }
         }
         <div class="journey-cta card">
-          <span class="material-icons cta-icon">luggage</span>
-          <p class="body-md text-variant">Add space details to start matching with parcels.</p>
-          <button class="btn btn-secondary btn-sm" routerLink="/dashboard/add-travel-plan">Configure Space</button>
+          <span class="material-icons cta-icon">local_shipping</span>
+          <p class="body-md text-variant">Check your active deliveries and update status.</p>
+          <a class="btn btn-secondary btn-sm" routerLink="/dashboard/my-deliveries">View All Deliveries</a>
         </div>
       </div>
     </section>

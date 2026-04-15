@@ -7,59 +7,102 @@
   <!-- Filters -->
   <div class="filter-bar animate-fade-in-up delay-1">
     @for (f of filters; track f) {
-      <button class="filter-chip" [class.active]="activeFilter === f" (click)="activeFilter = f">
-        {{ f === 'all' ? 'All' : f === 'in-transit' ? 'In Transit' : f === 'picked-up' ? 'Picked Up' : 'Delivered' }}
+      <button class="filter-chip" [class.active]="activeFilter === f" (click)="setActiveFilter(f)">
+        {{ f === 'all' ? 'All' : getStatusDisplay(f) }}
       </button>
     }
   </div>
 
+  <!-- Loading State -->
+  <div *ngIf="loading$ | async" class="loading-state">
+    <div class="loading-spinner"></div>
+    <p class="body-md text-variant">Loading your parcels...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error$ | async as error" class="error-state">
+    <span class="material-icons error-icon">error</span>
+    <p class="body-md">{{ error }}</p>
+    <button class="btn btn-secondary" (click)="retryLoadParcels()">Retry</button>
+  </div>
+
   <!-- Parcel Cards -->
-  <div class="parcels-list">
-    @for (p of parcels; track p.id; let i = $index) {
-      <div class="parcel-card card animate-fade-in-up" [style.animation-delay]="((i + 2) * 0.1) + 's'">
-        <div class="parcel-header">
-          <div>
-            <p class="title-md parcel-desc">{{ p.description }}</p>
-            <p class="body-sm text-variant">ID: #{{ p.id }}</p>
-          </div>
-          <span class="chip" [class]="'chip-' + p.statusType">{{ p.status }}</span>
-        </div>
-
-        <div class="parcel-route">
-          <div class="route-endpoint">
-            <span class="label-sm text-variant">FROM</span>
-            <p class="body-md">{{ p.from }}</p>
-          </div>
-          <div class="route-connector">
-            <span class="material-icons">arrow_forward</span>
-          </div>
-          <div class="route-endpoint">
-            <span class="label-sm text-variant">TO</span>
-            <p class="body-md">{{ p.to }}</p>
-          </div>
-        </div>
-
-        <!-- Progress -->
-        <div class="parcel-progress">
-          <div class="progress-track">
-            <div class="progress-fill" [style.width.%]="p.progress"></div>
-          </div>
-        </div>
-
-        <div class="parcel-footer">
-          <div class="traveller-info">
-            <span class="material-icons traveller-avatar">person</span>
+  <div class="parcels-list" *ngIf="!(loading$ | async)">
+    <ng-container *ngIf="parcels$ | async as parcels">
+      @for (p of getFilteredParcels(parcels); track p._id; let i = $index) {
+        <div class="parcel-card card animate-fade-in-up" [style.animation-delay]="((i + 2) * 0.1) + 's'">
+          <div class="parcel-header">
             <div>
-              <p class="label-lg">{{ p.traveller.name }}</p>
-              <p class="body-sm text-variant">{{ p.traveller.location }}</p>
+              <p class="title-md parcel-desc">{{ p.description || 'Parcel #' + p._id?.slice(-8) }}</p>
+              <p class="body-sm text-variant">ID: #{{ p._id?.slice(-8) }}</p>
+            </div>
+            <span class="chip" [class]="'chip-' + getStatusType(p.status)">{{ getStatusDisplay(p.status) }}</span>
+          </div>
+
+          <div class="parcel-route">
+            <div class="route-endpoint">
+              <span class="label-sm text-variant">FROM</span>
+              <p class="body-md">{{ p.pickup.city }}</p>
+            </div>
+            <div class="route-connector">
+              <span class="material-icons">arrow_forward</span>
+            </div>
+            <div class="route-endpoint">
+              <span class="label-sm text-variant">TO</span>
+              <p class="body-md">{{ p.drop.city }}</p>
             </div>
           </div>
-          <div class="parcel-meta">
-            <p class="title-md text-primary">{{ p.amount }}</p>
-            <p class="body-sm text-variant">{{ p.date }}</p>
+
+          <!-- Progress -->
+          <div class="parcel-progress">
+            <div class="progress-track">
+              <div class="progress-fill" [style.width.%]="getProgress(p.status)"></div>
+            </div>
+          </div>
+
+          <div class="parcel-footer">
+            <div class="traveller-info" *ngIf="p.traveller">
+              <span class="material-icons traveller-avatar">person</span>
+              <div>
+                <p class="label-lg">Traveller Assigned</p>
+                <p class="body-sm text-variant">ID: {{ p.traveller.slice(-8) }}</p>
+              </div>
+            </div>
+            <div class="traveller-info" *ngIf="!p.traveller && p.status === 'searching'">
+              <span class="material-icons traveller-avatar">schedule</span>
+              <div>
+                <p class="label-lg">Searching for Traveller</p>
+                <p class="body-sm text-variant">Broadcasted to network</p>
+              </div>
+            </div>
+            <div class="parcel-meta">
+              <p class="title-md text-primary">₹{{ p.price || 0 }}</p>
+              <p class="body-sm text-variant">{{ formatDate(p.createdAt || '') }}</p>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="parcel-actions" *ngIf="p.status === 'searching'">
+            <button class="btn btn-outline btn-sm" (click)="cancelParcel(p._id!)">
+              <span class="material-icons">delete</span>
+              Delete
+            </button>
           </div>
         </div>
+      }
+
+      <!-- Empty State -->
+      <div *ngIf="getFilteredParcels(parcels).length === 0" class="empty-state">
+        <span class="material-icons empty-icon">inventory_2</span>
+        <h3 class="title-lg">No parcels found</h3>
+        <p class="body-md text-variant">
+          {{ activeFilter === 'all' ? 'You haven\'t created any parcels yet.' : `No parcels with status "${getStatusDisplay(activeFilter)}".` }}
+        </p>
+        <a routerLink="/dashboard/create-parcel" class="btn btn-primary">
+          <span class="material-icons">add</span>
+          Create Your First Parcel
+        </a>
       </div>
-    }
+    </ng-container>
   </div>
 </div>

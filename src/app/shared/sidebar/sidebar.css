@@ -18,7 +18,7 @@
   align-items: center;
   gap: var(--space-3);
   padding: 0 var(--space-3);
-  margin-bottom: var(--space-8);
+  margin-bottom: var(--space-6);
 }
 
 .logo-mark {
@@ -51,7 +51,7 @@
   gap: var(--space-3);
   padding: var(--space-4);
   margin: 0 var(--space-1);
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-5);
   background-color: var(--surface-container-low);
   border-radius: var(--radius-xl);
 }
@@ -79,6 +79,60 @@
 
 .user-type {
   color: var(--on-surface);
+}
+
+/* ── Mode Switcher ── */
+.mode-switcher {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-1);
+  margin: 0 var(--space-1) var(--space-5);
+  background-color: var(--surface-container);
+  border-radius: var(--radius-xl);
+}
+
+.mode-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-lg);
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--on-surface-variant);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mode-btn .material-icons {
+  font-size: 18px;
+}
+
+.mode-btn:hover {
+  color: var(--on-surface);
+  background-color: var(--surface-container-high);
+}
+
+.mode-btn.active {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-container) 100%);
+  color: var(--on-primary);
+  box-shadow: 0 2px 8px rgba(143, 78, 0, 0.2);
+}
+
+.mode-btn.active .material-icons {
+  color: var(--on-primary);
+}
+
+/* ── Nav ── */
+.nav-section-label {
+  padding: 0 var(--space-4);
+  margin-bottom: var(--space-2);
+  color: var(--outline);
+  letter-spacing: 0.08em;
 }
 
 .sidebar-nav {
@@ -124,6 +178,7 @@
   flex-shrink: 0;
 }
 
+/* ── Footer ── */
 .sidebar-footer {
   margin-top: auto;
   padding-top: var(--space-6);
@@ -134,8 +189,13 @@
   padding-right: var(--space-1);
 }
 
-.nav-link-settings {
-  margin-top: var(--space-2);
+.nav-link-logout:hover {
+  background-color: var(--error-container);
+  color: var(--error);
+}
+
+.nav-link-logout:hover .nav-icon {
+  color: var(--error);
 }
 
 @media (max-width: 768px) {

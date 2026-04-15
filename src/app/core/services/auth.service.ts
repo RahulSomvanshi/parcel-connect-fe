@@ -8,7 +8,7 @@ export interface UserData {
     fullName: string;
     email?: string;
     phone: string;
-    role: 'sender' | 'traveller' | 'admin';
+    role: 'user' | 'admin';
     isVerified: boolean;
 }
 
@@ -64,8 +64,8 @@ export class AuthService {
         return !!this.currentUser?.isVerified;
     }
 
-    get userRole(): 'sender' | 'traveller' | 'admin' {
-        return this.currentUser?.role || 'sender';
+    get userRole(): 'user' | 'admin' {
+        return this.currentUser?.role || 'user';
     }
 
     // ─────────────────────────────
@@ -80,7 +80,7 @@ export class AuthService {
         return localStorage.getItem('refreshToken');
     }
 
-    private storeAuth(res: AuthResponse): void {
+    private storeAuth(res: any): void {
         if (res.token) {
             localStorage.setItem('token', res.token);
         }
@@ -89,9 +89,20 @@ export class AuthService {
             localStorage.setItem('refreshToken', res.refreshToken);
         }
 
-        if (res.user) {
-            localStorage.setItem('user', JSON.stringify(res.user));
-            this.currentUserSubject.next(res.user);
+        // Handle user data — backend may return it in different shapes
+        const userData: UserData | null = res.user || null;
+
+        if (userData) {
+            // 🔥 Fix backend typo: 'isVerifed' → 'isVerified'
+            if (userData.isVerified === undefined && (userData as any).isVerifed !== undefined) {
+                userData.isVerified = (userData as any).isVerifed;
+            }
+            // Also check response root level
+            if (userData.isVerified === undefined && res.isVerified !== undefined) {
+                userData.isVerified = res.isVerified;
+            }
+            localStorage.setItem('user', JSON.stringify(userData));
+            this.currentUserSubject.next(userData);
         }
     }
 
@@ -108,12 +119,19 @@ export class AuthService {
     login(data: { phone: string; password: string }): Observable<AuthResponse> {
         return this.http
             .post<AuthResponse>(`${this.baseUrl}/login`, data)
-            .pipe(tap((res) => this.storeAuth(res)));
+            .pipe(
+                tap((res: any) => {
+                    console.log('🔍 Login API raw response:', JSON.stringify(res, null, 2));
+                    this.storeAuth(res);
+                    console.log('🔍 Stored user:', JSON.stringify(this.currentUser, null, 2));
+                    console.log('🔍 isVerified:', this.isVerified);
+                })
+            );
     }
 
     verifyOtp(data: { phone: string; otp: string }): Observable<AuthResponse> {
         return this.http
-            .post<AuthResponse>(`${this.baseUrl}/verify-auth`, data)
+            .post<AuthResponse>(`${this.baseUrl}/verify-otp`, data)
             .pipe(
                 tap((res) => {
                     this.storeAuth(res);
@@ -166,8 +184,6 @@ export class AuthService {
     // ─────────────────────────────
 
     getDashboardRoute(): string {
-        return this.userRole === 'traveller'
-            ? '/dashboard/traveller'
-            : '/dashboard/sender';
+        return '/dashboard';
     }
 }

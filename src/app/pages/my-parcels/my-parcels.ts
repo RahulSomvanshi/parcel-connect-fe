@@ -1,34 +1,115 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+
+import { Parcel } from '../../core/services/parcel.service';
+import { ParcelActions } from '../../store/parcel/parcel.actions';
+import * as ParcelSelectors from '../../store/parcel/parcel.selectors';
 
 @Component({
   selector: 'app-my-parcels',
-  imports: [RouterLink],
+  imports: [CommonModule, RouterLink],
   templateUrl: './my-parcels.html',
   styleUrl: './my-parcels.css',
 })
-export class MyParcels {
-  parcels = [
-    {
-      id: 'KL-2024-8839', description: 'Artisan Ceramics Set', from: 'Indiranagar, Bengaluru', to: 'Bandra West, Mumbai',
-      status: 'In Transit', statusType: 'warning', amount: '₹2,450', date: 'Oct 24, 2024',
-      traveller: { name: 'Arjun Sharma', phone: '+91 98765 43210', location: 'Solapur Logistics Hub' },
-      progress: 65
-    },
-    {
-      id: 'KL-2024-9021', description: 'Laptop Accessory Bundle', from: 'Koramangala, Bengaluru', to: 'Andheri East, Mumbai',
-      status: 'Picked Up', statusType: 'primary', amount: '₹1,120', date: 'Oct 22, 2024',
-      traveller: { name: 'Priya Patel', phone: '+91 87654 32109', location: 'Bengaluru Airport' },
-      progress: 25
-    },
-    {
-      id: 'KL-2024-7742', description: 'Handcrafted Gift Box', from: 'MG Road, Bengaluru', to: 'C-Scheme, Jaipur',
-      status: 'Delivered', statusType: 'success', amount: '₹890', date: 'Oct 20, 2024',
-      traveller: { name: 'Vikram Singh', phone: '+91 76543 21098', location: 'Delivered' },
-      progress: 100
-    },
-  ];
-
+export class MyParcels implements OnInit, OnDestroy {
+  parcels$: Observable<Parcel[]>;
+  loading$: Observable<boolean>;
+  error$: Observable<string | null>;
   activeFilter = 'all';
-  filters = ['all', 'in-transit', 'picked-up', 'delivered'];
+  filters = ['all', 'searching', 'matched', 'in_transit', 'delivered'];
+
+  private destroy$ = new Subject<void>();
+
+  constructor(private store: Store) {
+    this.parcels$ = this.store.select(ParcelSelectors.selectParcels);
+    this.loading$ = this.store.select(ParcelSelectors.selectLoading);
+    this.error$ = this.store.select(ParcelSelectors.selectError);
+  }
+
+
+  ngOnInit() {
+    this.store.dispatch(ParcelActions.loadParcels());
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  setActiveFilter(filter: string) {
+    this.activeFilter = filter;
+  }
+
+  getFilteredParcels(parcels: Parcel[]): Parcel[] {
+    if (this.activeFilter === 'all') {
+      return parcels;
+    }
+    return parcels.filter(parcel => parcel.status === this.activeFilter);
+  }
+
+  getStatusType(status: string): string {
+    switch (status) {
+      case 'searching': return 'secondary';
+      case 'matched': return 'primary';
+      case 'in_transit': return 'warning';
+      case 'delivered': return 'success';
+      default: return 'secondary';
+    }
+  }
+
+  getStatusDisplay(status: string): string {
+    switch (status) {
+      case 'searching': return 'Searching';
+      case 'matched': return 'Matched';
+      case 'in_transit': return 'In Transit';
+      case 'delivered': return 'Delivered';
+      default: return status;
+    }
+  }
+
+  getTravellerName(traveller: Parcel['traveller']): string {
+    if (!traveller) {
+      return '';
+    }
+    return typeof traveller === 'string' ? traveller : traveller.fullName || '';
+  }
+
+  getTravellerPhone(traveller: Parcel['traveller']): string {
+    if (!traveller || typeof traveller === 'string') {
+      return '';
+    }
+    return traveller.phone || '';
+  }
+
+  formatDate(dateString: string): string {
+    return new Date(dateString).toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+  }
+
+  getProgress(status: string): number {
+    switch (status) {
+      case 'searching': return 10;
+      case 'matched': return 35;
+      case 'in_transit': return 65;
+      case 'delivered': return 100;
+      default: return 0;
+    }
+  }
+
+  cancelParcel(parcelId: string) {
+    if (confirm('Are you sure you want to delete this parcel?')) {
+      this.store.dispatch(ParcelActions.deleteParcel({ id: parcelId }));
+    }
+  }
+
+  retryLoadParcels() {
+    this.store.dispatch(ParcelActions.loadParcels());
+  }
 }

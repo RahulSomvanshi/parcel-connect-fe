@@ -6,37 +6,38 @@
 
   <div class="matching-grid">
     <div class="parcels-column">
-      @for (p of parcels; track p.title; let i = $index) {
+      @for (p of parcels$ | async; track p._id; let i = $index) {
         <div class="match-card card animate-fade-in-up" [style.animation-delay]="((i + 1) * 0.15) + 's'">
           <div class="match-top">
             <div class="match-info">
-              <h3 class="title-md">{{ p.title }}</h3>
+              <h3 class="title-md">{{ p.description || 'Parcel' }}</h3>
               <div class="match-meta">
                 <span class="body-sm text-variant">
                   <span class="material-icons" style="font-size:16px;vertical-align:text-bottom">schedule</span>
-                  Pickup by {{ p.pickup }}
+                  Pickup anytime
                 </span>
-                <span class="body-sm text-variant">{{ p.weight }}</span>
+                <span class="body-sm text-variant">{{ p.weight }} kg</span>
               </div>
             </div>
             <div class="match-payout">
-              <p class="title-lg text-primary">{{ p.amount }}</p>
-              <span class="chip" [class]="'chip-tier-' + p.tierType">{{ p.tier }}</span>
+              <p class="title-lg text-primary">₹{{ p.price || 0 }}</p>
+              <span class="chip chip-tier-standard">Standard</span>
             </div>
           </div>
           <div class="match-route">
             <div class="route-from">
               <span class="material-icons route-dot">radio_button_checked</span>
-              <span class="body-sm">{{ p.from }}</span>
+              <span class="body-sm">{{ p.pickup.city }}, {{ p.pickup.address }}</span>
             </div>
             <div class="route-line-v"></div>
             <div class="route-to">
               <span class="material-icons route-dot destination">location_on</span>
-              <span class="body-sm">{{ p.to }}</span>
+              <span class="body-sm">{{ p.drop.city }}, {{ p.drop.address }}</span>
             </div>
           </div>
           <div class="match-actions">
-            <button class="btn btn-primary btn-sm">Accept Task</button>
+            <button class="btn btn-primary btn-sm" (click)="acceptParcel(p._id!)">Accept Task</button>
+            <button class="btn btn-outline btn-sm" (click)="declineParcel(p._id!)">Decline</button>
             <button class="btn btn-secondary btn-sm">View Details</button>
           </div>
         </div>

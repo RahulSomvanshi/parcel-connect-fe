@@ -6,20 +6,36 @@
       <p class="body-lg text-variant">Streamline your supply chain with our heritage-inspired logistics network. Precision meeting speed.</p>
     </div>
     <div class="hero-stats">
-      <div class="stat-card">
-        <span class="material-icons stat-icon">local_shipping</span>
-        <div>
-          <p class="display-sm stat-number">14</p>
-          <p class="label-sm text-variant">ACTIVE SHIPMENTS</p>
+      <ng-container *ngIf="stats$ | async as stats">
+        <div class="stat-card">
+          <span class="material-icons stat-icon">local_shipping</span>
+          <div>
+            <p class="display-sm stat-number">{{ stats.totalParcels }}</p>
+            <p class="label-sm text-variant">TOTAL PARCELS</p>
+          </div>
         </div>
-      </div>
-      <div class="stat-card">
-        <span class="material-icons stat-icon">flight_takeoff</span>
-        <div>
-          <p class="display-sm stat-number">08</p>
-          <p class="label-sm text-variant">IN TRANSIT</p>
+        <div class="stat-card">
+          <span class="material-icons stat-icon">flight_takeoff</span>
+          <div>
+            <p class="display-sm stat-number">{{ stats.inTransitParcels }}</p>
+            <p class="label-sm text-variant">IN TRANSIT</p>
+          </div>
         </div>
-      </div>
+        <div class="stat-card">
+          <span class="material-icons stat-icon">pending</span>
+          <div>
+            <p class="display-sm stat-number">{{ stats.searchingParcels }}</p>
+            <p class="label-sm text-variant">PENDING</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="material-icons stat-icon">account_balance_wallet</span>
+          <div>
+            <p class="display-sm stat-number">{{ formatCurrency(stats.totalSpent) }}</p>
+            <p class="label-sm text-variant">TOTAL SPENT</p>
+          </div>
+        </div>
+      </ng-container>
     </div>
   </section>
 
@@ -31,21 +47,41 @@
         <a routerLink="/dashboard/my-parcels" class="btn btn-tertiary btn-sm">View All →</a>
       </div>
       <div class="shipment-list">
-        @for (s of shipments; track s.id) {
-          <div class="shipment-card card">
-            <div class="shipment-top">
-              <div>
-                <p class="title-sm shipment-id">{{ s.id }}</p>
-                <p class="body-sm text-variant">Destination: {{ s.destination }}</p>
+        <ng-container *ngIf="recentParcels$ | async as parcels">
+          @for (p of parcels; track p._id) {
+            <div class="shipment-card card">
+              <div class="shipment-top">
+                <div>
+                  <p class="title-sm shipment-id">#{{ p._id?.slice(-8) }}</p>
+                  <p class="body-sm text-variant">To: {{ p.drop.city }}</p>
+                </div>
+                <span class="chip" [class]="'chip-' + getStatusType(p.status)">{{ getStatusDisplay(p.status) }}</span>
               </div>
-              <span class="chip" [class]="'chip-' + s.statusType">{{ s.status }}</span>
+              <div class="shipment-bottom">
+                <p class="title-md shipment-amount">{{ formatCurrency(p.price || 0) }}</p>
+                <p class="body-sm text-variant">{{ formatDate(p.createdAt || '') }}</p>
+              </div>
             </div>
-            <div class="shipment-bottom">
-              <p class="title-md shipment-amount">{{ s.amount }}</p>
-              <p class="body-sm text-variant">{{ s.time }}</p>
-            </div>
+          }
+
+          <!-- Empty State -->
+          <div *ngIf="parcels.length === 0" class="empty-state">
+            <span class="material-icons empty-icon">inventory_2</span>
+            <p class="body-md text-variant">No parcels yet. Create your first parcel to get started!</p>
           </div>
-        }
+        </ng-container>
+
+        <!-- Loading State -->
+        <div *ngIf="loading$ | async" class="loading-state">
+          <div class="loading-spinner"></div>
+          <p class="body-sm text-variant">Loading parcels...</p>
+        </div>
+
+        <!-- Error State -->
+        <div *ngIf="error$ | async as error" class="error-state">
+          <span class="material-icons error-icon">error</span>
+          <p class="body-sm">{{ error }}</p>
+        </div>
       </div>
     </section>
 

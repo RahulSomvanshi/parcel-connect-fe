@@ -1,51 +1,45 @@
 <div class="create-parcel-page">
   <div class="page-header animate-fade-in-up">
     <h1 class="headline-lg">Create New Parcel</h1>
-    <p class="body-lg text-variant">Fill in the details below to broadcast your delivery request to our network of verified kinetic links.</p>
+    <p class="body-lg text-variant">Fill in the details below to find a traveller for your parcel.</p>
   </div>
 
-  <div class="form-grid">
+  <form [formGroup]="parcelForm" (ngSubmit)="onSubmit()" class="form-grid">
     <!-- Left: Form -->
     <div class="form-sections animate-fade-in-up delay-1">
-      <!-- Route Information -->
+
+      <!-- Pickup Info -->
       <section class="form-section card">
         <h2 class="title-lg section-title">
-          <span class="material-icons section-icon">route</span>
-          Route Information
+          <span class="material-icons section-icon">flight_takeoff</span>
+          Pickup Details
         </h2>
-        <div class="form-row">
+        <div formGroupName="pickup">
           <div class="form-group">
             <label class="form-label">Pickup City</label>
-            <input type="text" class="form-input" placeholder="e.g., Mumbai">
+            <input type="text" class="form-input" placeholder="e.g., Mumbai" formControlName="city">
           </div>
-          <div class="form-group">
-            <label class="form-label">Delivery City</label>
-            <input type="text" class="form-input" placeholder="e.g., Bangalore">
-          </div>
-        </div>
-        <div class="form-row">
           <div class="form-group">
             <label class="form-label">Pickup Address</label>
-            <input type="text" class="form-input" placeholder="Full pickup address">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Delivery Address</label>
-            <input type="text" class="form-input" placeholder="Full delivery address">
+            <input type="text" class="form-input" placeholder="Full pickup address" formControlName="address">
           </div>
         </div>
-        <div class="form-row">
+      </section>
+
+      <!-- Drop Info -->
+      <section class="form-section card">
+        <h2 class="title-lg section-title">
+          <span class="material-icons section-icon">flight_land</span>
+          Drop Details
+        </h2>
+        <div formGroupName="drop">
           <div class="form-group">
-            <label class="form-label">Preferred Date</label>
-            <input type="date" class="form-input">
+            <label class="form-label">Drop City</label>
+            <input type="text" class="form-input" placeholder="e.g., Bangalore" formControlName="city">
           </div>
           <div class="form-group">
-            <label class="form-label">Time Window</label>
-            <select class="form-input form-select">
-              <option>Morning (8AM - 12PM)</option>
-              <option>Afternoon (12PM - 5PM)</option>
-              <option>Evening (5PM - 9PM)</option>
-              <option>Anytime</option>
-            </select>
+            <label class="form-label">Drop Address</label>
+            <input type="text" class="form-input" placeholder="Full delivery address" formControlName="address">
           </div>
         </div>
       </section>
@@ -56,40 +50,19 @@
           <span class="material-icons section-icon">inventory_2</span>
           Parcel Details
         </h2>
-        <div class="form-group">
-          <label class="form-label">Parcel Description</label>
-          <input type="text" class="form-input" placeholder="e.g., Handcrafted ceramics set">
-        </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Category</label>
-            <select class="form-input form-select">
-              <option>Electronics</option>
-              <option>Documents</option>
-              <option>Handicrafts</option>
-              <option>Food Items</option>
-              <option>Clothing</option>
-              <option>Other</option>
-            </select>
+            <label class="form-label">Weight (kg)</label>
+            <input type="number" class="form-input" placeholder="e.g., 2.5" step="0.1" formControlName="weight">
           </div>
           <div class="form-group">
-            <label class="form-label">Estimated Weight</label>
-            <input type="text" class="form-input" placeholder="e.g., 2.5 kg">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Dimensions (L×W×H cm)</label>
-            <input type="text" class="form-input" placeholder="e.g., 30 × 20 × 15">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Declared Value (₹)</label>
-            <input type="number" class="form-input" placeholder="e.g., 5000">
+            <label class="form-label">Price (₹) <span class="text-variant">— optional</span></label>
+            <input type="number" class="form-input" placeholder="e.g., 500" formControlName="price">
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Special Instructions</label>
-          <textarea class="form-input form-textarea" rows="3" placeholder="Fragile, handle with care..."></textarea>
+          <label class="form-label">Description <span class="text-variant">— optional</span></label>
+          <input type="text" class="form-input" placeholder="Brief description of the parcel" formControlName="description">
         </div>
       </section>
     </div>
@@ -101,34 +74,38 @@
         <div class="summary-rows">
           <div class="summary-row">
             <span class="body-md text-variant">Route</span>
-            <span class="body-md">Mumbai → Bangalore</span>
-          </div>
-          <div class="summary-row">
-            <span class="body-md text-variant">Category</span>
-            <span class="body-md">Handicrafts</span>
+            <span class="body-md">{{ getRouteSummary() }}</span>
           </div>
           <div class="summary-row">
             <span class="body-md text-variant">Weight</span>
-            <span class="body-md">2.5 kg</span>
+            <span class="body-md">{{ parcelForm.get('weight')?.value || 0 }} kg</span>
           </div>
           <div class="summary-row">
-            <span class="body-md text-variant">Est. Cost</span>
-            <span class="title-md text-primary">₹1,850</span>
+            <span class="body-md text-variant">Price</span>
+            <span class="title-md text-primary">₹{{ parcelForm.get('price')?.value || 0 }}</span>
           </div>
         </div>
-        <button class="btn btn-primary btn-lg btn-block" style="margin-top: var(--space-6)">
+
+        <button type="submit" class="btn btn-primary btn-lg btn-block" style="margin-top: var(--space-6)"
+          [disabled]="(creating$ | async)">
           <span class="material-icons">send</span>
-          Broadcast to Network
+          {{ (creating$ | async) ? 'Creating...' : 'Create Parcel' }}
         </button>
+
+        <!-- Error Display -->
+        <div *ngIf="error$ | async as error" class="error-message"
+          style="margin-top: var(--space-4); color: var(--error); font-size: 0.875rem">
+          {{ error }}
+        </div>
       </div>
 
       <div class="security-card card" style="margin-top: var(--space-5)">
         <div class="security-header">
           <span class="material-icons security-icon">verified_user</span>
-          <h4 class="title-sm">Kinetic Security</h4>
+          <h4 class="title-sm">Secure Delivery</h4>
         </div>
-        <p class="body-sm text-variant">Your parcel is covered by our heritage guarantee. Verified carriers only.</p>
+        <p class="body-sm text-variant">Your parcel will be matched with verified travellers on the same route.</p>
       </div>
     </div>
-  </div>
+  </form>
 </div>
