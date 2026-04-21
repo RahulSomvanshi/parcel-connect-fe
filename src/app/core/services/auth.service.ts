@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment'
 
 export interface UserData {
     _id: string;
@@ -23,7 +24,6 @@ export interface AuthResponse {
     providedIn: 'root',
 })
 export class AuthService {
-    private baseUrl = 'http://localhost:5000/api/auth';
 
     private currentUserSubject = new BehaviorSubject<UserData | null>(
         this.getStoredUser()
@@ -38,7 +38,7 @@ export class AuthService {
             this.currentUserSubject.next(user);
         }
     }
-
+    private baseUrl = environment.apiUrl;
     // ─────────────────────────────
     // 🔐 AUTH STATE
     // ─────────────────────────────

@@ -1,0 +1,284 @@
+<div class="admin-dashboard">
+  <!-- Hero Banner -->
+  <section class="admin-hero animate-fade-in-up">
+    <div class="hero-text">
+      <h1 class="headline-lg">Admin Control Center</h1>
+      <p class="body-lg text-variant-light">Manage all users and parcels across the ParcelConnect network.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-card">
+        <span class="material-icons stat-icon">people</span>
+        <div>
+          <p class="display-sm stat-number">{{ (totalUsers$ | async) || 0 }}</p>
+          <p class="label-sm text-variant-light">TOTAL USERS</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="material-icons stat-icon">inventory_2</span>
+        <div>
+          <p class="display-sm stat-number">{{ (totalParcels$ | async) || 0 }}</p>
+          <p class="label-sm text-variant-light">TOTAL PARCELS</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tab Switcher -->
+  <div class="tab-bar animate-fade-in-up delay-1">
+    <button
+      class="tab-btn"
+      [class.active]="activeTab === 'users'"
+      (click)="switchTab('users')"
+      id="tab-users"
+    >
+      <span class="material-icons">people</span>
+      All Users
+    </button>
+    <button
+      class="tab-btn"
+      [class.active]="activeTab === 'parcels'"
+      (click)="switchTab('parcels')"
+      id="tab-parcels"
+    >
+      <span class="material-icons">local_shipping</span>
+      All Parcels
+    </button>
+  </div>
+
+  <!-- ═══════════════ USERS TABLE ═══════════════ -->
+  <section class="table-section animate-fade-in-up delay-2" *ngIf="activeTab === 'users'">
+    <!-- Loading State -->
+    <div *ngIf="usersLoading$ | async" class="loading-state">
+      <div class="loading-spinner"></div>
+      <p class="body-md text-variant">Loading users...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="usersError$ | async as error" class="error-state">
+      <span class="material-icons error-icon">error</span>
+      <p class="body-md">{{ error }}</p>
+      <button class="btn btn-secondary btn-sm" (click)="retryUsers()">Retry</button>
+    </div>
+
+    <!-- Users Table -->
+    <ng-container *ngIf="!(usersLoading$ | async) && !(usersError$ | async)">
+      <ng-container *ngIf="users$ | async as users">
+        <div class="table-wrapper card" *ngIf="users.length > 0">
+          <table class="data-table" id="users-table">
+            <thead>
+              <tr>
+                <th class="label-md">USER</th>
+                <th class="label-md">PHONE</th>
+                <th class="label-md">EMAIL</th>
+                <th class="label-md">ROLE</th>
+                <th class="label-md">STATUS</th>
+                <th class="label-md">JOINED</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (user of users; track user._id; let i = $index) {
+                <tr class="table-row" [style.animation-delay]="(i * 0.05) + 's'">
+                  <td>
+                    <div class="user-cell">
+                      <div class="user-avatar-sm">
+                        <span class="material-icons">person</span>
+                      </div>
+                      <div>
+                        <p class="title-sm">{{ user.fullName }}</p>
+                        <p class="body-sm text-variant">#{{ user._id.slice(-8) }}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="body-md">{{ user.phone }}</td>
+                  <td class="body-md text-variant">{{ user.email || '—' }}</td>
+                  <td>
+                    <span class="chip" [class]="getRoleBadge(user.role)">{{ getRoleDisplay(user.role) }}</span>
+                  </td>
+                  <td>
+                    <span class="chip" [class]="getVerifiedBadge(user.isVerified)">
+                      <span class="material-icons chip-icon">{{ user.isVerified ? 'verified' : 'pending' }}</span>
+                      {{ getVerifiedDisplay(user.isVerified) }}
+                    </span>
+                  </td>
+                  <td class="body-sm text-variant">{{ formatDate(user.createdAt) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="users.length === 0" class="empty-state">
+          <span class="material-icons empty-icon">people_outline</span>
+          <h3 class="title-lg">No users found</h3>
+          <p class="body-md text-variant">There are no registered users yet.</p>
+        </div>
+
+        <!-- Pagination -->
+        <ng-container *ngIf="usersPagination$ | async as pagination">
+          <div class="pagination" *ngIf="pagination.totalPages > 1">
+            <button
+              class="page-btn"
+              [disabled]="currentUsersPage === 1"
+              (click)="prevUsersPage()"
+              id="users-prev"
+            >
+              <span class="material-icons">chevron_left</span>
+            </button>
+
+            @for (page of getPageNumbers(pagination.totalPages); track page) {
+              <button
+                class="page-btn"
+                [class.active]="page === currentUsersPage"
+                (click)="goToUsersPage(page)"
+              >
+                {{ page }}
+              </button>
+            }
+
+            <button
+              class="page-btn"
+              [disabled]="currentUsersPage === pagination.totalPages"
+              (click)="nextUsersPage(pagination.totalPages)"
+              id="users-next"
+            >
+              <span class="material-icons">chevron_right</span>
+            </button>
+
+            <span class="page-info body-sm text-variant">
+              Page {{ pagination.page }} of {{ pagination.totalPages }} · {{ pagination.total }} total
+            </span>
+          </div>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+  </section>
+
+  <!-- ═══════════════ PARCELS TABLE ═══════════════ -->
+  <section class="table-section animate-fade-in-up delay-2" *ngIf="activeTab === 'parcels'">
+    <!-- Loading State -->
+    <div *ngIf="parcelsLoading$ | async" class="loading-state">
+      <div class="loading-spinner"></div>
+      <p class="body-md text-variant">Loading parcels...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="parcelsError$ | async as error" class="error-state">
+      <span class="material-icons error-icon">error</span>
+      <p class="body-md">{{ error }}</p>
+      <button class="btn btn-secondary btn-sm" (click)="retryParcels()">Retry</button>
+    </div>
+
+    <!-- Parcels Table -->
+    <ng-container *ngIf="!(parcelsLoading$ | async) && !(parcelsError$ | async)">
+      <ng-container *ngIf="parcels$ | async as parcels">
+        <div class="table-wrapper card" *ngIf="parcels.length > 0">
+          <table class="data-table" id="parcels-table">
+            <thead>
+              <tr>
+                <th class="label-md">PARCEL</th>
+                <th class="label-md">ROUTE</th>
+                <th class="label-md">SENDER</th>
+                <th class="label-md">TRAVELLER</th>
+                <th class="label-md">WEIGHT</th>
+                <th class="label-md">PRICE</th>
+                <th class="label-md">STATUS</th>
+                <th class="label-md">CREATED</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (parcel of parcels; track parcel._id; let i = $index) {
+                <tr class="table-row" [style.animation-delay]="(i * 0.05) + 's'">
+                  <td>
+                    <div class="parcel-cell">
+                      <div class="parcel-icon-sm">
+                        <span class="material-icons">inventory_2</span>
+                      </div>
+                      <div>
+                        <p class="title-sm">{{ parcel.description || 'Parcel' }}</p>
+                        <p class="body-sm text-variant">#{{ parcel._id.slice(-8) }}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="route-cell">
+                      <span class="body-sm">{{ parcel.pickup.city }}</span>
+                      <span class="material-icons route-arrow">arrow_forward</span>
+                      <span class="body-sm">{{ parcel.drop.city }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div>
+                      <p class="body-md">{{ getSenderName(parcel.sender) }}</p>
+                      <p class="body-sm text-variant">{{ getSenderPhone(parcel.sender) }}</p>
+                    </div>
+                  </td>
+                  <td>
+                    <div>
+                      <p class="body-md" [class.text-variant]="getTravellerName(parcel.traveller) === 'Unassigned'">
+                        {{ getTravellerName(parcel.traveller) }}
+                      </p>
+                      <p class="body-sm text-variant">{{ getTravellerPhone(parcel.traveller) }}</p>
+                    </div>
+                  </td>
+                  <td class="body-md">{{ parcel.weight }} kg</td>
+                  <td class="title-sm text-primary">{{ formatCurrency(parcel.price) }}</td>
+                  <td>
+                    <span class="chip" [class]="'chip-' + getStatusType(parcel.status)">
+                      {{ getStatusDisplay(parcel.status) }}
+                    </span>
+                  </td>
+                  <td class="body-sm text-variant">{{ formatDate(parcel.createdAt) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="parcels.length === 0" class="empty-state">
+          <span class="material-icons empty-icon">inventory_2</span>
+          <h3 class="title-lg">No parcels found</h3>
+          <p class="body-md text-variant">There are no parcels in the system yet.</p>
+        </div>
+
+        <!-- Pagination -->
+        <ng-container *ngIf="parcelsPagination$ | async as pagination">
+          <div class="pagination" *ngIf="pagination.totalPages > 1">
+            <button
+              class="page-btn"
+              [disabled]="currentParcelsPage === 1"
+              (click)="prevParcelsPage()"
+              id="parcels-prev"
+            >
+              <span class="material-icons">chevron_left</span>
+            </button>
+
+            @for (page of getPageNumbers(pagination.totalPages); track page) {
+              <button
+                class="page-btn"
+                [class.active]="page === currentParcelsPage"
+                (click)="goToParcelsPage(page)"
+              >
+                {{ page }}
+              </button>
+            }
+
+            <button
+              class="page-btn"
+              [disabled]="currentParcelsPage === pagination.totalPages"
+              (click)="nextParcelsPage(pagination.totalPages)"
+              id="parcels-next"
+            >
+              <span class="material-icons">chevron_right</span>
+            </button>
+
+            <span class="page-info body-sm text-variant">
+              Page {{ pagination.page }} of {{ pagination.totalPages }} · {{ pagination.total }} total
+            </span>
+          </div>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+  </section>
+</div>

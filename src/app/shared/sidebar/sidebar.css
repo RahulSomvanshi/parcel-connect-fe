@@ -83,7 +83,7 @@
 
 /* ── Mode Switcher ── */
 .mode-switcher {
-  display: flex;
+  /* display: flex; */
   gap: var(--space-2);
   padding: var(--space-1);
   margin: 0 var(--space-1) var(--space-5);
@@ -125,6 +125,11 @@
 
 .mode-btn.active .material-icons {
   color: var(--on-primary);
+}
+
+.mode-btn-admin.active {
+  background: linear-gradient(135deg, #1a1c2e 0%, #4a1942 100%);
+  box-shadow: 0 2px 8px rgba(74, 25, 66, 0.3);
 }
 
 /* ── Nav ── */

@@ -8,9 +8,16 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './bottom-nav.css',
 })
 export class BottomNav {
-  @Input() userType: 'sender' | 'traveller' = 'sender';
+  @Input() userType: 'sender' | 'traveller' | 'admin' = 'sender';
 
   get links() {
+    if (this.userType === 'admin') {
+      return [
+        { path: '/dashboard/admin', icon: 'admin_panel_settings', label: 'Admin' },
+        { path: '/dashboard/sender', icon: 'inventory_2', label: 'Sender' },
+        { path: '/dashboard/traveller', icon: 'flight', label: 'Traveller' },
+      ];
+    }
     if (this.userType === 'sender') {
       return [
         { path: '/dashboard/sender', icon: 'dashboard', label: 'Dashboard' },

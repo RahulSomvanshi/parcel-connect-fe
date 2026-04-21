@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Parcel } from './parcel.service';
+import { environment } from '../../../environments/environment'
 
 export interface TravelPlan {
   _id?: string;
@@ -28,10 +29,9 @@ export interface CreateTravelPlanRequest {
   providedIn: 'root',
 })
 export class TravellerService {
-  private baseUrl = 'http://localhost:5000/api';
 
   constructor(private http: HttpClient) {}
-
+   private baseUrl = environment.apiUrl;
   // Create a new travel plan
   createTravelPlan(data: CreateTravelPlanRequest): Observable<TravelPlan> {
     return this.http.post<TravelPlan>(`${this.baseUrl}/traveller`, data);

@@ -30,11 +30,19 @@
       <span class="material-icons">flight</span>
       Traveller
     </a>
+    @if (isAdmin) {
+      <a routerLink="/dashboard/admin"
+         class="mode-btn mode-btn-admin"
+         [class.active]="userType === 'admin'">
+        <span class="material-icons">shield</span>
+        Admin
+      </a>
+    }
   </div>
 
   <nav class="sidebar-nav">
     <p class="nav-section-label label-sm">
-      {{ userType === 'sender' ? 'SENDER MENU' : 'TRAVELLER MENU' }}
+      {{ userType === 'admin' ? 'ADMIN MENU' : (userType === 'sender' ? 'SENDER MENU' : 'TRAVELLER MENU') }}
     </p>
     @for (link of links; track link.path) {
       <a

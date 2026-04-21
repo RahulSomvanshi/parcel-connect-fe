@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment'
 
 export interface ParcelSender {
   _id?: string;
@@ -46,10 +47,9 @@ export interface CreateParcelRequest {
   providedIn: 'root',
 })
 export class ParcelService {
-  private baseUrl = 'http://localhost:5000/api';
 
   constructor(private http: HttpClient) {}
-
+  private baseUrl = environment.apiUrl;
   // Create a new parcel
   createParcel(parcelData: CreateParcelRequest): Observable<Parcel> {
     return this.http.post<Parcel>(`${this.baseUrl}/parcels`, parcelData);

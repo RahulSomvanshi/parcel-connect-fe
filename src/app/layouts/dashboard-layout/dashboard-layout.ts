@@ -12,7 +12,7 @@ import { filter } from 'rxjs/operators';
   styleUrl: './dashboard-layout.css',
 })
 export class DashboardLayout {
-  userType: 'sender' | 'traveller' = 'sender';
+  userType: 'sender' | 'traveller' | 'admin' = 'sender';
   breadcrumbs: { label: string; link?: string }[] = [];
 
   constructor(private router: Router) {
@@ -20,8 +20,13 @@ export class DashboardLayout {
       .pipe(filter((e) => e instanceof NavigationEnd))
       .subscribe((e: any) => {
         const url = e.urlAfterRedirects || e.url;
-        this.userType = url.includes('traveller') || url.includes('matching') || url.includes('my-deliveries') || url.includes('add-travel')
-          ? 'traveller' : 'sender';
+        if (url.includes('/dashboard/admin')) {
+          this.userType = 'admin';
+        } else if (url.includes('traveller') || url.includes('matching') || url.includes('my-deliveries') || url.includes('add-travel')) {
+          this.userType = 'traveller';
+        } else {
+          this.userType = 'sender';
+        }
         this.updateBreadcrumbs(url);
       });
   }
@@ -35,10 +40,17 @@ export class DashboardLayout {
       '/dashboard/matching-parcels': 'Matching Parcels',
       '/dashboard/my-deliveries': 'My Deliveries',
       '/dashboard/add-travel-plan': 'Add Travel Plan',
+      '/dashboard/admin': 'Admin Dashboard',
     };
     const label = map[url] || 'Dashboard';
+    let homeLink = '/dashboard/sender';
+    if (this.userType === 'traveller') {
+      homeLink = '/dashboard/traveller';
+    } else if (this.userType === 'admin') {
+      homeLink = '/dashboard/admin';
+    }
     this.breadcrumbs = [
-      { label: 'Dashboard', link: this.userType === 'sender' ? '/dashboard/sender' : '/dashboard/traveller' },
+      { label: 'Dashboard', link: homeLink },
       { label },
     ];
   }

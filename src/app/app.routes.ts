@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard, guestGuard } from './core/guards/auth.guard';
+import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -91,6 +92,16 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/add-travel-plan/add-travel-plan').then(
             (m) => m.AddTravelPlan
+          ),
+      },
+
+      // ── Admin Mode (admin role only) ──
+      {
+        path: 'admin',
+        canActivate: [adminGuard],
+        loadComponent: () =>
+          import('./pages/admin-dashboard/admin-dashboard').then(
+            (m) => m.AdminDashboard
           ),
       },
     ],

@@ -9,13 +9,14 @@ import { routes } from './app.routes';
 import { reducers } from './store/app.state';
 import { ParcelEffects } from './store/parcel/parcel.effects';
 import { TravellerEffects } from './store/traveller/traveller.effects';
+import { AdminEffects } from './store/admin/admin.effects';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideStore(reducers),
-    provideEffects([ParcelEffects, TravellerEffects]),
+    provideEffects([ParcelEffects, TravellerEffects, AdminEffects]),
     provideRouter(routes, withHashLocation()),
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
     provideStoreDevtools({ maxAge: 25, logOnly: false }),

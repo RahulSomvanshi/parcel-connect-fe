@@ -9,12 +9,16 @@ import { AuthService } from '../../core/services/auth.service';
   styleUrl: './sidebar.css',
 })
 export class Sidebar {
-  @Input() userType: 'sender' | 'traveller' = 'sender';
+  @Input() userType: 'sender' | 'traveller' | 'admin' = 'sender';
 
   constructor(private authService: AuthService, private router: Router) {}
 
   get userName(): string {
     return this.authService.currentUser?.fullName || 'User';
+  }
+
+  get isAdmin(): boolean {
+    return this.authService.userRole === 'admin';
   }
 
   get senderLinks() {
@@ -34,7 +38,16 @@ export class Sidebar {
     ];
   }
 
+  get adminLinks() {
+    return [
+      { path: '/dashboard/admin', icon: 'admin_panel_settings', label: 'Admin Panel' },
+    ];
+  }
+
   get links() {
+    if (this.userType === 'admin') {
+      return this.adminLinks;
+    }
     return this.userType === 'sender' ? this.senderLinks : this.travellerLinks;
   }
 

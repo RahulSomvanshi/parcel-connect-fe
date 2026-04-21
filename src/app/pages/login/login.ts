@@ -55,8 +55,12 @@ export class Login {
           return;
         }
 
-        // ✅ Verified user → go to dashboard
-        this.router.navigate(['/dashboard']);
+        // ✅ Verified user → go to appropriate dashboard
+        if (this.authService.userRole === 'admin') {
+          this.router.navigate(['/dashboard/admin']);
+        } else {
+          this.router.navigate(['/dashboard']);
+        }
       },
 
       error: (err) => {
