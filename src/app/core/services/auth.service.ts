@@ -112,13 +112,13 @@ export class AuthService {
 
     register(data: any): Observable<AuthResponse> {
         return this.http
-            .post<AuthResponse>(`${this.baseUrl}/register`, data)
+            .post<AuthResponse>(`${this.baseUrl}/auth/register`, data)
             .pipe(tap((res) => this.storeAuth(res)));
     }
 
     login(data: { phone: string; password: string }): Observable<AuthResponse> {
         return this.http
-            .post<AuthResponse>(`${this.baseUrl}/login`, data)
+            .post<AuthResponse>(`${this.baseUrl}/auth/login`, data)
             .pipe(
                 tap((res: any) => {
                     console.log('🔍 Login API raw response:', JSON.stringify(res, null, 2));
@@ -131,7 +131,7 @@ export class AuthService {
 
     verifyOtp(data: { phone: string; otp: string }): Observable<AuthResponse> {
         return this.http
-            .post<AuthResponse>(`${this.baseUrl}/verify-otp`, data)
+            .post<AuthResponse>(`${this.baseUrl}/auth/verify-otp`, data)
             .pipe(
                 tap((res) => {
                     this.storeAuth(res);
@@ -150,7 +150,7 @@ export class AuthService {
     }
 
     resendOtp(phone: string): Observable<any> {
-        return this.http.post(`${this.baseUrl}/resend-otp`, { phone });
+        return this.http.post(`${this.baseUrl}/auth/resend-otp`, { phone });
     }
 
     // ─────────────────────────────
@@ -159,7 +159,7 @@ export class AuthService {
 
     refreshToken(): Observable<AuthResponse> {
         return this.http
-            .post<AuthResponse>(`${this.baseUrl}/refresh-token`, {
+            .post<AuthResponse>(`${this.baseUrl}/auth/refresh-token`, {
                 refreshToken: this.getRefreshToken(),
             })
             .pipe(tap((res) => this.storeAuth(res)));

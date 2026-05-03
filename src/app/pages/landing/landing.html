@@ -47,50 +47,73 @@
         <h3 class="headline-md form-title">Create Account</h3>
         <p class="body-md text-variant form-subtitle">Join our logistics ecosystem today.</p>
 
-        <form class="register-form">
+        <form class="register-form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">First Name</label>
-              <input type="text" class="form-input" placeholder="Rahul">
+              <input type="text" class="form-input" placeholder="Rahul" formControlName="firstName">
+              <div class="error-message" *ngIf="registerForm.get('firstName')?.touched && registerForm.get('firstName')?.invalid">
+                First name is required
+              </div>
             </div>
             <div class="form-group">
               <label class="form-label">Last Name</label>
-              <input type="text" class="form-input" placeholder="Sharma">
+              <input type="text" class="form-input" placeholder="Sharma" formControlName="lastName">
+              <div class="error-message" *ngIf="registerForm.get('lastName')?.touched && registerForm.get('lastName')?.invalid">
+                Last name is required
+              </div>
             </div>
           </div>
           <div class="form-group">
             <label class="form-label">Email Address</label>
-            <input type="email" class="form-input" placeholder="rahul@example.com">
+            <input type="email" class="form-input" placeholder="rahul@example.com" formControlName="email">
+            <div class="error-message" *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid">
+              Please enter a valid email
+            </div>
           </div>
           <div class="form-group">
             <label class="form-label">Phone Number</label>
             <div class="phone-input-group">
               <span class="phone-prefix">+91</span>
-              <input type="tel" class="form-input phone-input" placeholder="98765 43210">
+              <input type="tel" class="form-input phone-input" placeholder="98765 43210" formControlName="phone">
+            </div>
+            <div class="error-message" *ngIf="registerForm.get('phone')?.touched && registerForm.get('phone')?.invalid">
+              Phone number is required
             </div>
           </div>
           <div class="form-group">
             <label class="form-label">Password</label>
-            <input type="password" class="form-input" placeholder="Create a strong password">
+            <input type="password" class="form-input" placeholder="Create a strong password" formControlName="password">
+            <div class="error-message" *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">
+              Password must be at least 6 characters
+            </div>
           </div>
           <div class="form-group">
             <label class="form-label">I want to</label>
-            <select class="form-input form-select">
+            <select class="form-input form-select" formControlName="role">
               <option value="">Select your role</option>
               <option value="sender">Send Parcels</option>
               <option value="traveller">Carry Parcels & Earn</option>
               <option value="both">Both</option>
             </select>
+            <div class="error-message" *ngIf="registerForm.get('role')?.touched && registerForm.get('role')?.invalid">
+              Please select your role
+            </div>
           </div>
           <div class="form-terms">
             <label class="checkbox-label">
-              <input type="checkbox" class="checkbox">
+              <input type="checkbox" class="checkbox" formControlName="terms">
               <span class="body-sm">I agree to the <a routerLink="/landing">Terms of Service</a> and <a routerLink="/landing">Privacy Policy</a></span>
             </label>
+            <div class="error-message" *ngIf="registerForm.get('terms')?.touched && registerForm.get('terms')?.invalid">
+              You must agree to the terms and conditions
+            </div>
           </div>
-          <button type="button" class="btn btn-primary btn-lg btn-block" routerLink="/otp-verification">
-            Create Account
-            <span class="material-icons">arrow_forward</span>
+          <button type="submit" class="btn btn-primary btn-lg btn-block" [disabled]="isLoading">
+            <span *ngIf="!isLoading">Create Account</span>
+            <span *ngIf="isLoading">Creating...</span>
+            <span class="material-icons" *ngIf="!isLoading">arrow_forward</span>
+            <span class="material-icons spin" *ngIf="isLoading">refresh</span>
           </button>
         </form>
 
