@@ -1,5 +1,5 @@
 /* ============================================
-   DESI PARCEL CONNECT — "The Kinetic Heritage"
+   DESI PARCEL CONNECT — "The Zippora Heritage"
    Global Design System
    ============================================ */
 
@@ -508,4 +508,183 @@ a:hover {
 ::selection {
   background-color: var(--primary-fixed-dim);
   color: var(--on-primary-container);
+}
+
+/* ── Responsive Design System ── */
+
+/* Mobile First Approach - Base styles are already mobile-friendly */
+
+/* Tablet Styles */
+@media (min-width: 640px) {
+  .display-lg { font-size: 3rem; }
+  .display-md { font-size: 2.5rem; }
+  .display-sm { font-size: 2rem; }
+  .headline-lg { font-size: 1.75rem; }
+  .headline-md { font-size: 1.5rem; }
+  .title-lg { font-size: 1.25rem; }
+}
+
+/* Desktop Styles */
+@media (min-width: 1024px) {
+  .display-lg { font-size: 3.5rem; }
+  .display-md { font-size: 2.75rem; }
+  .display-sm { font-size: 2.25rem; }
+  .headline-lg { font-size: 2rem; }
+  .headline-md { font-size: 1.75rem; }
+  .title-lg { font-size: 1.375rem; }
+}
+
+/* Large Desktop Styles */
+@media (min-width: 1440px) {
+  .display-lg { font-size: 4rem; }
+  .display-md { font-size: 3rem; }
+  .headline-lg { font-size: 2.25rem; }
+}
+
+/* Responsive Utilities */
+.hide-mobile { display: block; }
+.hide-tablet { display: block; }
+.hide-desktop { display: block; }
+
+@media (max-width: 639px) {
+  .hide-mobile { display: none !important; }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .hide-tablet { display: none !important; }
+}
+
+@media (min-width: 1024px) {
+  .hide-desktop { display: none !important; }
+}
+
+/* Responsive Grid System */
+.grid-mobile-1 { grid-template-columns: 1fr; }
+.grid-tablet-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-desktop-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-desktop-4 { grid-template-columns: repeat(4, 1fr); }
+
+@media (min-width: 640px) {
+  .grid-tablet-2 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1024px) {
+  .grid-desktop-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-desktop-4 { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Responsive Spacing */
+@media (max-width: 639px) {
+  .container { padding: 0 var(--space-4); }
+  .section-mobile { padding: var(--space-6) 0; }
+}
+
+@media (min-width: 640px) {
+  .container { padding: 0 var(--space-6); }
+  .section-tablet { padding: var(--space-8) 0; }
+}
+
+@media (min-width: 1024px) {
+  .container { padding: 0 var(--space-8); }
+  .section-desktop { padding: var(--space-12) 0; }
+}
+
+/* Responsive Typography */
+@media (max-width: 639px) {
+  .text-mobile-center { text-align: center; }
+  .text-mobile-left { text-align: left; }
+}
+
+/* Responsive Images */
+.img-responsive {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Responsive Tables */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile Menu Toggle */
+.mobile-menu-toggle {
+  display: none;
+  position: fixed;
+  top: var(--space-4);
+  right: var(--space-4);
+  z-index: 1001;
+  background: var(--primary);
+  color: var(--on-primary);
+  border: none;
+  border-radius: var(--radius-full);
+  padding: var(--space-2);
+  cursor: pointer;
+  box-shadow: var(--shadow-ambient);
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* Mobile Overlay */
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+.mobile-overlay.active {
+  display: block;
+}
+
+/* Touch-friendly targets */
+@media (max-width: 768px) {
+  .btn, .nav-link, .card {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .form-input, .form-select {
+    min-height: 48px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}
+
+/* Responsive Animations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Print Styles */
+@media print {
+  * {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+  
+  .sidebar, .mobile-menu-toggle, .btn {
+    display: none !important;
+  }
+  
+  .container {
+    max-width: none !important;
+    padding: 0 !important;
+  }
 }

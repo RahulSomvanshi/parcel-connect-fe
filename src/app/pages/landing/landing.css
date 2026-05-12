@@ -241,6 +241,17 @@
     font-size: 2rem;
   }
 
+  .hero-stats {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+
+  .stat-item {
+    flex: 1;
+    min-width: 200px;
+  }
+
   .form-logo-mobile {
     display: flex;
   }
@@ -251,5 +262,93 @@
 
   .form-row {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .landing-hero {
+    padding: var(--space-8) var(--space-4);
+  }
+
+  .hero-logo {
+    margin-bottom: var(--space-6);
+  }
+
+  .hero-headline {
+    font-size: 1.75rem;
+    line-height: 1.2;
+  }
+
+  .hero-sub {
+    font-size: 0.9375rem;
+    margin-bottom: var(--space-8);
+  }
+
+  .hero-stats {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .stat-item {
+    padding: var(--space-3) var(--space-4);
+    min-width: auto;
+  }
+
+  .stat-icon {
+    font-size: 24px;
+  }
+
+  .deco-circle-1 {
+    width: 300px;
+    height: 300px;
+    top: -50px;
+    right: -50px;
+  }
+
+  .deco-circle-2 {
+    width: 200px;
+    height: 200px;
+    bottom: -40px;
+    left: -40px;
+  }
+
+  .landing-form-panel {
+    padding: var(--space-4);
+  }
+
+  .form-card {
+    padding: var(--space-5);
+    border-radius: var(--radius-xl);
+  }
+
+  .form-title {
+    font-size: 1.5rem;
+  }
+
+  .form-subtitle {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-brand {
+    font-size: 1.5rem;
+  }
+
+  .hero-headline {
+    font-size: 1.5rem;
+  }
+
+  .form-card {
+    padding: var(--space-4);
+  }
+
+  .register-form {
+    gap: var(--space-4);
+  }
+
+  .btn-lg {
+    padding: var(--space-3) var(--space-6);
+    font-size: 0.9375rem;
   }
 }
