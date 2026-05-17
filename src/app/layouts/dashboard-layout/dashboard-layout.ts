@@ -3,6 +3,7 @@ import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { Sidebar } from '../../shared/sidebar/sidebar';
 import { TopNav } from '../../shared/top-nav/top-nav';
 import { BottomNav } from '../../shared/bottom-nav/bottom-nav';
+import { AuthService } from '../../core/services/auth.service';
 import { filter } from 'rxjs/operators';
 
 @Component({
@@ -12,23 +13,30 @@ import { filter } from 'rxjs/operators';
   styleUrl: './dashboard-layout.css',
 })
 export class DashboardLayout {
-  userType: 'sender' | 'traveller' | 'admin' = 'sender';
   breadcrumbs: { label: string; link?: string }[] = [];
+  sidebarOpen = false;
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {
     this.router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
-      .subscribe((e: any) => {
+      .subscribe((e: NavigationEnd) => {
         const url = e.urlAfterRedirects || e.url;
-        if (url.includes('/dashboard/admin')) {
-          this.userType = 'admin';
-        } else if (url.includes('traveller') || url.includes('matching') || url.includes('my-deliveries') || url.includes('add-travel')) {
-          this.userType = 'traveller';
-        } else {
-          this.userType = 'sender';
-        }
         this.updateBreadcrumbs(url);
+        this.closeSidebar();
       });
+
+    this.updateBreadcrumbs(this.router.url);
+  }
+
+  toggleSidebar(): void {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
+
+  closeSidebar(): void {
+    this.sidebarOpen = false;
   }
 
   updateBreadcrumbs(url: string) {
@@ -42,15 +50,10 @@ export class DashboardLayout {
       '/dashboard/add-travel-plan': 'Add Travel Plan',
       '/dashboard/admin': 'Admin Dashboard',
     };
-    const label = map[url] || 'Dashboard';
-    let homeLink = '/dashboard/sender';
-    if (this.userType === 'traveller') {
-      homeLink = '/dashboard/traveller';
-    } else if (this.userType === 'admin') {
-      homeLink = '/dashboard/admin';
-    }
+    const path = url.split('?')[0];
+    const label = map[path] || 'Dashboard';
     this.breadcrumbs = [
-      { label: 'Dashboard', link: homeLink },
+      { label: 'Dashboard', link: this.authService.getDashboardRoute() },
       { label },
     ];
   }

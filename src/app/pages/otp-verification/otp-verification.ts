@@ -3,6 +3,7 @@ import { Router, RouterLink, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-otp-verification',
@@ -20,7 +21,8 @@ export class OtpVerification implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private toast: ToastService
   ) { }
   ngOnDestroy(): void {
     if (this.interval) {
@@ -29,7 +31,17 @@ export class OtpVerification implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.phone = window.history.state?.phone || '';
+    this.phone =
+      window.history.state?.phone ||
+      localStorage.getItem('otp_phone') ||
+      '';
+    if (this.phone) {
+      localStorage.setItem('otp_phone', this.phone);
+    }
+    const role = window.history.state?.role;
+    if (role === 'sender' || role === 'traveller') {
+      this.authService.setPendingFlow(role);
+    }
 
     this.startTimer();
   }
@@ -73,7 +85,7 @@ export class OtpVerification implements OnInit, OnDestroy {
     const finalOtp = this.otp.join('');
 
     if (finalOtp.length !== 6) {
-      alert('Enter valid OTP');
+      this.toast.warning('Enter valid OTP');
       return;
     }
 
@@ -85,11 +97,12 @@ export class OtpVerification implements OnInit, OnDestroy {
     }).subscribe({
       next: () => {
         this.isLoading = false;
-        this.router.navigate([this.authService.getDashboardRoute()]);
+        localStorage.removeItem('otp_phone');
+        this.router.navigate([this.authService.getPostAuthRoute()]);
       },
       error: (err) => {
         this.isLoading = false;
-        alert(err.error?.message || 'Invalid OTP');
+        this.toast.error(err.error?.message || 'Invalid OTP');
       }
     });
   }
@@ -105,7 +118,7 @@ export class OtpVerification implements OnInit, OnDestroy {
         this.startTimer();
       },
       error: (err) => {
-        alert(err.error?.message || 'Failed to resend OTP');
+        this.toast.error(err.error?.message || 'Failed to resend OTP');
       }
     });
   }

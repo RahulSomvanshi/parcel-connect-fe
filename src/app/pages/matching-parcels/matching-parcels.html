@@ -1,78 +1,115 @@
 <div class="matching-page">
   <div class="page-header animate-fade-in-up">
-    <h1 class="headline-lg">Available Shipments</h1>
-    <p class="body-lg text-variant">We've found <strong>12 parcels</strong> matching your upcoming trip from Mumbai to Bangalore on Oct 24.</p>
+    <h1 class="headline-lg">Matching Parcels</h1>
+    <p class="body-lg text-variant">Parcels along your trip route that you can accept.</p>
   </div>
 
+  @if (myTrips.length) {
+    <div class="form-group" style="max-width: 420px; margin-bottom: 1.5rem;">
+      <label class="form-label">Select trip</label>
+      <select class="form-input" [(ngModel)]="selectedTripId" (ngModelChange)="onTripChange()">
+        @for (trip of myTrips; track trip._id) {
+          <option [value]="trip._id">{{ trip.from }} → {{ trip.to }} ({{ trip.travelDate | date:'mediumDate' }})</option>
+        }
+      </select>
+    </div>
+  }
+
+  @if (tripsLoading) {
+    <p class="body-md text-variant">Loading your trips...</p>
+  }
+
+  @if (!tripsLoading && loading) {
+    <p class="body-md text-variant">Loading matching parcels...</p>
+  }
+
+  @if (error && !tripsLoading && !loading) {
+    <p class="body-md text-variant">{{ error }}</p>
+    @if (!myTrips.length) {
+      <a routerLink="/dashboard/add-travel-plan" class="btn btn-primary btn-sm" style="margin-top: 1rem;">Add Travel Plan</a>
+    }
+  }
+
+  @if (!tripsLoading && !loading && parcels.length) {
   <div class="matching-grid">
     <div class="parcels-column">
-      @for (p of parcels$ | async; track p._id; let i = $index) {
+      @for (p of parcels; track p._id; let i = $index) {
         <div class="match-card card animate-fade-in-up" [style.animation-delay]="((i + 1) * 0.15) + 's'">
           <div class="match-top">
             <div class="match-info">
               <h3 class="title-md">{{ p.description || 'Parcel' }}</h3>
               <div class="match-meta">
-                <span class="body-sm text-variant">
-                  <span class="material-icons" style="font-size:16px;vertical-align:text-bottom">schedule</span>
-                  Pickup anytime
-                </span>
                 <span class="body-sm text-variant">{{ p.weight }} kg</span>
+                <span class="chip chip-secondary">{{ getStatusLabel(p.status) }}</span>
+                @if (p.isFlagged) {
+                  <span class="chip chip-warning" title="Prohibited content suspected">Flagged</span>
+                }
               </div>
             </div>
             <div class="match-payout">
               <p class="title-lg text-primary">₹{{ p.price || 0 }}</p>
-              <span class="chip chip-tier-standard">Standard</span>
             </div>
           </div>
           <div class="match-route">
             <div class="route-from">
               <span class="material-icons route-dot">radio_button_checked</span>
-              <span class="body-sm">{{ p.pickup.city }}, {{ p.pickup.address }}</span>
+              <span class="body-sm">{{ p.pickup.city }}</span>
             </div>
             <div class="route-line-v"></div>
             <div class="route-to">
               <span class="material-icons route-dot destination">location_on</span>
-              <span class="body-sm">{{ p.drop.city }}, {{ p.drop.address }}</span>
+              <span class="body-sm">{{ p.drop.city }}</span>
             </div>
           </div>
           <div class="match-actions">
-            <button class="btn btn-primary btn-sm" (click)="acceptParcel(p._id!)">Accept Task</button>
-            <button class="btn btn-outline btn-sm" (click)="declineParcel(p._id!)">Decline</button>
-            <button class="btn btn-secondary btn-sm">View Details</button>
+            <button
+              class="btn btn-primary btn-sm"
+              (click)="acceptParcel(p)"
+              [disabled]="acceptingParcelId === p._id"
+            >
+              {{ acceptingParcelId === p._id ? 'Accepting...' : 'Accept' }}
+            </button>
+            <button class="btn btn-outline btn-sm" (click)="rejectParcel(p._id!)" [disabled]="!!acceptingParcelId">Reject</button>
           </div>
         </div>
       }
     </div>
 
+    <div class="pagination" *ngIf="totalPages > 1" style="display:flex;gap:0.5rem;align-items:center;justify-content:center;margin-top:1rem;flex-wrap:wrap">
+      <button class="btn btn-secondary btn-sm" type="button" [disabled]="currentPage === 1" (click)="prevPage()">Prev</button>
+      <span class="body-sm text-variant">Page {{ currentPage }} of {{ totalPages }} · {{ totalParcels }} total</span>
+      <button class="btn btn-secondary btn-sm" type="button" [disabled]="currentPage === totalPages" (click)="nextPage()">Next</button>
+    </div>
+
+    @if (selectedTrip) {
     <div class="summary-column animate-fade-in-up delay-3">
       <div class="route-summary card card-elevated">
-        <h3 class="title-lg" style="margin-bottom:var(--space-5)">Route Summary</h3>
+        <h3 class="title-lg" style="margin-bottom:var(--space-5)">Trip Summary</h3>
         <div class="summary-route-visual">
           <div class="route-city">
             <span class="material-icons">flight_takeoff</span>
-            <p class="title-sm">Mumbai</p>
+            <p class="title-sm">{{ selectedTrip.from }}</p>
           </div>
           <div class="route-dash"></div>
           <div class="route-city">
             <span class="material-icons">flight_land</span>
-            <p class="title-sm">Bangalore</p>
+            <p class="title-sm">{{ selectedTrip.to }}</p>
           </div>
         </div>
         <div class="summary-stats">
           <div class="summary-stat">
-            <p class="display-sm text-primary">12</p>
-            <p class="label-sm text-variant">AVAILABLE</p>
+            <p class="display-sm text-primary">{{ totalParcels }}</p>
+            <p class="label-sm text-variant">MATCHING</p>
           </div>
           <div class="summary-stat">
-            <p class="display-sm">₹4,500</p>
-            <p class="label-sm text-variant">MAX PAYOUT</p>
+            <p class="display-sm">{{ selectedTrip.availableWeight }} kg</p>
+            <p class="label-sm text-variant">CAPACITY</p>
           </div>
         </div>
-        <div class="tip-card">
-          <span class="material-icons tip-icon">lightbulb</span>
-          <p class="body-sm text-variant">"Optimizing your route can increase earnings by 15%"</p>
-        </div>
+        <p class="body-sm text-variant">Trip status: <strong>{{ selectedTrip.status || 'scheduled' }}</strong></p>
       </div>
     </div>
+    }
   </div>
+  }
 </div>

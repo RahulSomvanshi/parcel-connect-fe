@@ -5,6 +5,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+@import './responsive.css';
 
 /* ── CSS Custom Properties (Design Tokens) ── */
 :root {
@@ -78,6 +79,9 @@
   --space-5: 1.25rem;
   --space-6: 1.5rem;
   --space-8: 2rem;
+
+  /* Layout */
+  --app-max-width: 100%;
   --space-10: 2.5rem;
   --space-12: 3rem;
   --space-16: 4rem;
@@ -607,56 +611,14 @@ a:hover {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Mobile Menu Toggle */
-.mobile-menu-toggle {
+/* Mobile menu button (in top-nav) */
+.menu-btn {
   display: none;
-  position: fixed;
-  top: var(--space-4);
-  right: var(--space-4);
-  z-index: 1001;
-  background: var(--primary);
-  color: var(--on-primary);
-  border: none;
-  border-radius: var(--radius-full);
-  padding: var(--space-2);
-  cursor: pointer;
-  box-shadow: var(--shadow-ambient);
 }
 
 @media (max-width: 768px) {
-  .mobile-menu-toggle {
+  .menu-btn {
     display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-}
-
-/* Mobile Overlay */
-.mobile-overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-}
-
-.mobile-overlay.active {
-  display: block;
-}
-
-/* Touch-friendly targets */
-@media (max-width: 768px) {
-  .btn, .nav-link, .card {
-    min-height: 44px;
-    min-width: 44px;
-  }
-  
-  .form-input, .form-select {
-    min-height: 48px;
-    font-size: 16px; /* Prevents zoom on iOS */
   }
 }
 

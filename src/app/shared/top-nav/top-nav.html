@@ -1,5 +1,13 @@
 <header class="top-nav">
   <div class="top-nav-left">
+    <button
+      type="button"
+      class="icon-btn menu-btn"
+      aria-label="Open menu"
+      (click)="menuToggle.emit()"
+    >
+      <span class="material-icons">menu</span>
+    </button>
     @if (showBreadcrumb && breadcrumbs.length) {
       <nav class="breadcrumbs">
         @for (crumb of breadcrumbs; track crumb.label; let last = $last) {

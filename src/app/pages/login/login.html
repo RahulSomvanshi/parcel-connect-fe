@@ -79,7 +79,8 @@
         </form>
 
         <p class="body-sm form-footer text-variant">
-          Don't have an account? <a routerLink="/register" class="link-primary">Register</a>
+          Don't have an account?
+          <a routerLink="/register" [queryParams]="{ reauth: '1' }" class="link-primary">Register</a>
         </p>
         <p class="body-sm footer-legal text-variant">Powered by Zippora India 2024</p>
       </div>

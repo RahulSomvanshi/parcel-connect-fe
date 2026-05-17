@@ -16,12 +16,12 @@ export interface AdminState {
 
 export const initialState: AdminState = {
   users: [],
-  usersPagination: { total: 0, page: 1, limit: 10, totalPages: 0 },
+  usersPagination: { total: 0, page: 1, limit: 5, totalPages: 0 },
   usersLoading: false,
   usersError: null,
 
   parcels: [],
-  parcelsPagination: { total: 0, page: 1, limit: 10, totalPages: 0 },
+  parcelsPagination: { total: 0, page: 1, limit: 5, totalPages: 0 },
   parcelsLoading: false,
   parcelsError: null,
 };

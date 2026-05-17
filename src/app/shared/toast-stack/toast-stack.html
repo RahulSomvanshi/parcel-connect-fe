@@ -1,0 +1,13 @@
+<div class="toast-stack">
+  <div
+    class="toast-item"
+    *ngFor="let item of toastService.items$ | async; trackBy: trackById"
+    [class.toast-success]="item.type === 'success'"
+    [class.toast-error]="item.type === 'error'"
+    [class.toast-info]="item.type === 'info'"
+    [class.toast-warning]="item.type === 'warning'"
+    (click)="toastService.dismiss(item.id)"
+  >
+    {{ item.text }}
+  </div>
+</div>

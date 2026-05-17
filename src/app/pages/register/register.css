@@ -47,6 +47,23 @@
   gap: var(--space-4);
 }
 
+@media (max-width: 640px) {
+  .register-page {
+    padding: var(--space-4);
+    align-items: flex-start;
+    padding-top: var(--space-6);
+  }
+
+  .register-card {
+    padding: var(--space-5);
+    border-radius: var(--radius-xl);
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 .form-input.error {
   border: 1px solid #ff4d4f;
 }

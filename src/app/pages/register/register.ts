@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterLink, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-register',
@@ -23,17 +24,21 @@ export class Register {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private toast: ToastService
   ) { }
 
   ngOnInit() {
+    const pendingFlow = localStorage.getItem('pending_flow');
+    const defaultRole = pendingFlow === 'traveller' ? 'traveller' : 'sender';
+
     this.registerForm = this.fb.group({
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
       email: [''],
       phone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-
+      role: [defaultRole, [Validators.required]],
     });
   }
 
@@ -52,12 +57,10 @@ export class Register {
       email: formValue.email,
       phone: formValue.phone,
       password: formValue.password,
-      role: 'user'
+      role: formValue.role,
     };
-    console.log('Registering with payload:', payload);
     this.authService.register(payload).subscribe({
-      next: (res: any) => {
-        console.log('Registered:', res);
+      next: () => {
         this.isLoading = false;
 
         this.router.navigate(['/otp-verification'], {
@@ -65,9 +68,8 @@ export class Register {
         });
       },
       error: (err) => {
-        console.error(err);
         this.isLoading = false;
-        alert(err.error?.message || 'Registration failed');
+        this.toast.error(err.error?.message || 'Registration failed');
       }
     });
   }

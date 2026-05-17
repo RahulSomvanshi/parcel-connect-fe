@@ -1,9 +1,14 @@
 import { Routes } from '@angular/router';
 import { authGuard, guestGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
+import {
+  dashboardEntryGuard,
+  senderGuard,
+  travellerGuard,
+} from './core/guards/role.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '', redirectTo: '/landing', pathMatch: 'full' },
 
   // ── Public / Guest Routes ──
   {
@@ -31,22 +36,19 @@ export const routes: Routes = [
       ),
   },
 
-  // ── Protected Dashboard Routes ──
-  // All routes accessible to any authenticated user (user/admin)
-  // Users can switch between Sender and Traveller modes freely
+  // ── Protected Dashboard Routes (role-specific children) ──
   {
     path: 'dashboard',
-    canActivate: [authGuard],
+    canActivate: [authGuard, dashboardEntryGuard],
     loadComponent: () =>
       import('./layouts/dashboard-layout/dashboard-layout').then(
         (m) => m.DashboardLayout
       ),
     children: [
-      { path: '', redirectTo: 'sender', pathMatch: 'full' },
-
-      // ── Sender Mode ──
+      // ── Sender Mode (sender role only) ──
       {
         path: 'sender',
+        canActivate: [senderGuard],
         loadComponent: () =>
           import('./pages/sender-dashboard/sender-dashboard').then(
             (m) => m.SenderDashboard
@@ -54,6 +56,7 @@ export const routes: Routes = [
       },
       {
         path: 'create-parcel',
+        canActivate: [senderGuard],
         loadComponent: () =>
           import('./pages/create-parcel/create-parcel').then(
             (m) => m.CreateParcel
@@ -61,6 +64,7 @@ export const routes: Routes = [
       },
       {
         path: 'my-parcels',
+        canActivate: [senderGuard],
         loadComponent: () =>
           import('./pages/my-parcels/my-parcels').then((m) => m.MyParcels),
       },
@@ -68,6 +72,7 @@ export const routes: Routes = [
       // ── Traveller Mode ──
       {
         path: 'traveller',
+        canActivate: [travellerGuard],
         loadComponent: () =>
           import('./pages/traveller-dashboard/traveller-dashboard').then(
             (m) => m.TravellerDashboard
@@ -75,6 +80,7 @@ export const routes: Routes = [
       },
       {
         path: 'matching-parcels',
+        canActivate: [travellerGuard],
         loadComponent: () =>
           import('./pages/matching-parcels/matching-parcels').then(
             (m) => m.MatchingParcels
@@ -82,6 +88,7 @@ export const routes: Routes = [
       },
       {
         path: 'my-deliveries',
+        canActivate: [travellerGuard],
         loadComponent: () =>
           import('./pages/my-deliveries/my-deliveries').then(
             (m) => m.MyDeliveries
@@ -89,6 +96,7 @@ export const routes: Routes = [
       },
       {
         path: 'add-travel-plan',
+        canActivate: [travellerGuard],
         loadComponent: () =>
           import('./pages/add-travel-plan/add-travel-plan').then(
             (m) => m.AddTravelPlan
@@ -108,6 +116,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: '/login',
+    redirectTo: '/landing',
   },
 ];

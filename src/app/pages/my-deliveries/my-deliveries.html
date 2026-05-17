@@ -1,19 +1,30 @@
 <div class="deliveries-page">
   <div class="page-header animate-fade-in-up">
     <h1 class="headline-lg">My Deliveries</h1>
-    <p class="body-lg text-variant">Manage your active assignments and update transit status.</p>
+    <p class="body-lg text-variant">All assignments from your accepted parcels.</p>
   </div>
 
   <div class="deliveries-grid">
     <div class="deliveries-list">
+      <div *ngIf="loading" class="loading-state" style="padding:2rem;text-align:center">
+        <div class="loading-spinner"></div>
+        <p class="body-md text-variant">Loading deliveries...</p>
+      </div>
+
+      <div *ngIf="error && !loading" class="error-state" style="padding:2rem;text-align:center">
+        <span class="material-icons error-icon">error</span>
+        <p class="body-md">{{ error }}</p>
+        <button class="btn btn-secondary btn-sm" type="button" (click)="loadDeliveries()">Retry</button>
+      </div>
+
       @for (d of deliveries$ | async; track d._id; let i = $index) {
         <div class="delivery-card card animate-fade-in-up" [style.animation-delay]="((i + 1) * 0.12) + 's'">
           <div class="delivery-header">
             <div>
               <h3 class="title-md">{{ d.description || 'Parcel' }}</h3>
-              <p class="body-sm text-variant">ID: #{{ d._id }}</p>
+              <p class="body-sm text-variant">#{{ d._id?.slice(-8) }}</p>
             </div>
-            <span class="chip" [class]="'chip-' + getStatusType(d.status)">{{ d.status }}</span>
+            <span class="chip" [class]="'chip-' + getStatusType(d.status)">{{ getStatusDisplay(d.status) }}</span>
           </div>
 
           <div class="delivery-details">
@@ -26,11 +37,19 @@
               </div>
             </div>
             <div class="detail-group">
-              <span class="material-icons detail-icon">event</span>
+              <span class="material-icons detail-icon">payments</span>
               <div>
-                <p class="label-sm text-variant">CREATED</p>
-                <p class="body-md">{{ d.createdAt | date:'mediumDate' }}</p>
-                <p class="body-sm text-variant">{{ d.createdAt | date:'shortTime' }}</p>
+                <p class="label-sm text-variant">EARNINGS</p>
+                <p class="body-md text-primary">{{ formatInr(getParcelEarnings(d.price).travellerEarning) }}</p>
+                <p class="body-sm text-variant">Company (20%): {{ formatInr(getParcelEarnings(d.price).companyShare) }}</p>
+              </div>
+            </div>
+            <div class="detail-group">
+              <span class="material-icons detail-icon">scale</span>
+              <div>
+                <p class="label-sm text-variant">WEIGHT</p>
+                <p class="body-md">{{ d.weight }} kg</p>
+                <p class="body-sm text-variant">Price: ₹{{ d.price || 0 }}</p>
               </div>
             </div>
           </div>
@@ -40,7 +59,7 @@
               <span class="material-icons route-dot">radio_button_checked</span>
               <div>
                 <p class="label-sm text-variant">FROM</p>
-                <p class="body-md">{{ d.pickup.city }}, {{ d.pickup.address }}</p>
+                <p class="body-md">{{ d.pickup.city }}</p>
               </div>
             </div>
             <div class="route-line-vertical"></div>
@@ -48,12 +67,33 @@
               <span class="material-icons route-dot destination">location_on</span>
               <div>
                 <p class="label-sm text-variant">TO</p>
-                <p class="body-md">{{ d.drop.city }}, {{ d.drop.address }}</p>
+                <p class="body-md">{{ d.drop.city }}</p>
               </div>
             </div>
           </div>
 
           <div class="delivery-actions">
+            <button
+              class="btn btn-secondary btn-sm"
+              (click)="markPickedUp(d._id!)"
+              [disabled]="!canPickUp(d.status)"
+            >
+              Picked Up
+            </button>
+            <button
+              class="btn btn-secondary btn-sm"
+              (click)="markInTransit(d._id!)"
+              [disabled]="!canMoveInTransit(d.status)"
+            >
+              In Transit
+            </button>
+            <button
+              class="btn btn-secondary btn-sm"
+              (click)="markOutForDelivery(d._id!)"
+              [disabled]="!(d.status === 'IN_TRANSIT' || d.status === 'in_transit')"
+            >
+              Out for Delivery
+            </button>
             <button
               class="btn btn-primary btn-sm"
               (click)="deliverParcel(d._id!)"
@@ -65,32 +105,50 @@
           </div>
         </div>
       }
+
+      <div *ngIf="!loading && !error && (deliveries$ | async)?.length === 0" class="empty-state card" style="padding:2rem;text-align:center">
+        <span class="material-icons" style="font-size:48px;opacity:0.5">local_shipping</span>
+        <p class="body-md text-variant" style="margin-top:1rem">No deliveries yet. Accept parcels from matching page.</p>
+        <a routerLink="/dashboard/matching-parcels" class="btn btn-primary btn-sm" style="margin-top:1rem">Find Matching Parcels</a>
+      </div>
+
+      <div class="pagination" *ngIf="totalPages > 1" style="display:flex;gap:0.5rem;align-items:center;justify-content:center;margin-top:1rem;flex-wrap:wrap">
+        <button class="btn btn-secondary btn-sm" type="button" [disabled]="currentPage === 1" (click)="prevPage()">Prev</button>
+        <span class="body-sm text-variant">Page {{ currentPage }} of {{ totalPages }} · {{ totalDeliveries }} total</span>
+        <button class="btn btn-secondary btn-sm" type="button" [disabled]="currentPage === totalPages" (click)="nextPage()">Next</button>
+      </div>
     </div>
 
-    <!-- Impact Card -->
-    <div class="impact-panel animate-fade-in-up delay-3">
+    <div class="impact-panel animate-fade-in-up delay-3" *ngIf="stats$ | async as stats">
       <div class="impact-card card card-elevated">
         <div class="impact-icon-circle">
           <span class="material-icons">emoji_events</span>
         </div>
-        <h3 class="title-lg" style="margin-bottom:var(--space-2); text-align:center">Your Delivery Impact</h3>
-        <p class="body-md text-variant" style="text-align:center; margin-bottom:var(--space-6)">You've traveled 1,240km this month helping people connect.</p>
+        <h3 class="title-lg" style="margin-bottom:var(--space-2); text-align:center">Your Earnings</h3>
         <div class="impact-stats">
           <div class="impact-stat">
-            <p class="display-sm">12</p>
+            <p class="display-sm">{{ stats.completedDeliveries }}</p>
             <p class="label-sm text-variant">COMPLETED</p>
           </div>
           <div class="impact-stat">
-            <p class="display-sm text-primary">4.9</p>
-            <p class="label-sm text-variant">RATING</p>
+            <p class="display-sm">{{ stats.activeDeliveries }}</p>
+            <p class="label-sm text-variant">ACTIVE</p>
+          </div>
+        </div>
+        <div class="impact-stats" style="margin-top:1rem">
+          <div class="impact-stat">
+            <p class="display-sm text-primary">{{ formatInr(stats.travellerEarnings) }}</p>
+            <p class="label-sm text-variant">YOUR SHARE (80%)</p>
+          </div>
+          <div class="impact-stat">
+            <p class="display-sm">{{ formatInr(stats.companyShare) }}</p>
+            <p class="label-sm text-variant">COMPANY (20%)</p>
           </div>
         </div>
         <div class="impact-bar-section" style="margin-top:var(--space-6)">
-          <p class="label-md text-variant" style="margin-bottom:var(--space-2)">Monthly Goal (15 deliveries)</p>
-          <div class="progress-track">
-            <div class="progress-fill" style="width:80%"></div>
-          </div>
-          <p class="body-sm text-variant" style="margin-top:var(--space-2)">12 of 15 completed</p>
+          <p class="label-md text-variant">Pending earnings</p>
+          <p class="title-md text-primary">{{ formatInr(stats.pendingEarnings) }}</p>
+          <p class="body-sm text-variant" style="margin-top:0.5rem">{{ stats.totalDeliveries }} total assignments</p>
         </div>
       </div>
     </div>

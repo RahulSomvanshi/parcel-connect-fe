@@ -1,24 +1,34 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, CommonModule],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.css',
 })
 export class Sidebar {
-  @Input() userType: 'sender' | 'traveller' | 'admin' = 'sender';
+  @Input() isOpen = false;
+  @Output() menuClose = new EventEmitter<void>();
 
   constructor(private authService: AuthService, private router: Router) {}
+
+  onNavClick(): void {
+    this.menuClose.emit();
+  }
 
   get userName(): string {
     return this.authService.currentUser?.fullName || 'User';
   }
 
-  get isAdmin(): boolean {
-    return this.authService.userRole === 'admin';
+  get userRole() {
+    return this.authService.userRole;
+  }
+
+  get roleLabel(): string {
+    return this.authService.getRoleLabel();
   }
 
   get senderLinks() {
@@ -45,14 +55,13 @@ export class Sidebar {
   }
 
   get links() {
-    if (this.userType === 'admin') {
-      return this.adminLinks;
-    }
-    return this.userType === 'sender' ? this.senderLinks : this.travellerLinks;
+    if (this.userRole === 'admin') return this.adminLinks;
+    if (this.userRole === 'traveller') return this.travellerLinks;
+    if (this.userRole === 'sender') return this.senderLinks;
+    return [];
   }
 
   logout() {
     this.authService.logout();
-    this.router.navigate(['/login']);
   }
 }

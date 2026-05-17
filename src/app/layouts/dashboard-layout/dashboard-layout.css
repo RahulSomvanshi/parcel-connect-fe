@@ -18,13 +18,37 @@
   padding-bottom: var(--space-16);
 }
 
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 99;
+}
+
+.sidebar-overlay.active {
+  display: block;
+}
+
 @media (max-width: 768px) {
   .dashboard-main {
     margin-left: 0;
+    width: 100%;
   }
 
   .dashboard-content {
-    padding: var(--space-4);
-    padding-bottom: 5rem;
+    padding: var(--space-3) var(--space-4);
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .sidebar-overlay.active {
+    display: block;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-content {
+    padding: var(--space-3);
+    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
   }
 }

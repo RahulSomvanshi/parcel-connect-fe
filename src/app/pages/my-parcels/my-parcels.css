@@ -73,3 +73,21 @@
 }
 
 .parcel-meta { text-align: right; }
+
+@media (max-width: 768px) {
+  .parcel-header,
+  .parcel-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .parcel-meta {
+    text-align: left;
+    width: 100%;
+  }
+
+  .parcel-card {
+    padding: var(--space-4);
+  }
+}

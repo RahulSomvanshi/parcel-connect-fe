@@ -1,50 +1,28 @@
 <div class="create-parcel-page">
   <div class="page-header animate-fade-in-up">
     <h1 class="headline-lg">Create New Parcel</h1>
-    <p class="body-lg text-variant">Fill in the details below to find a traveller for your parcel.</p>
+    <p class="body-lg text-variant">Enter pickup and drop cities only — we use cities as route proof.</p>
   </div>
 
   <form [formGroup]="parcelForm" (ngSubmit)="onSubmit()" class="form-grid">
-    <!-- Left: Form -->
     <div class="form-sections animate-fade-in-up delay-1">
-
-      <!-- Pickup Info -->
       <section class="form-section card">
         <h2 class="title-lg section-title">
-          <span class="material-icons section-icon">flight_takeoff</span>
-          Pickup Details
+          <span class="material-icons section-icon">route</span>
+          Route (Cities)
         </h2>
-        <div formGroupName="pickup">
+        <div class="form-row">
           <div class="form-group">
             <label class="form-label">Pickup City</label>
-            <input type="text" class="form-input" placeholder="e.g., Mumbai" formControlName="city">
+            <input type="text" class="form-input" placeholder="e.g., Mumbai" formControlName="pickupCity">
           </div>
-          <div class="form-group">
-            <label class="form-label">Pickup Address</label>
-            <input type="text" class="form-input" placeholder="Full pickup address" formControlName="address">
-          </div>
-        </div>
-      </section>
-
-      <!-- Drop Info -->
-      <section class="form-section card">
-        <h2 class="title-lg section-title">
-          <span class="material-icons section-icon">flight_land</span>
-          Drop Details
-        </h2>
-        <div formGroupName="drop">
           <div class="form-group">
             <label class="form-label">Drop City</label>
-            <input type="text" class="form-input" placeholder="e.g., Bangalore" formControlName="city">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Drop Address</label>
-            <input type="text" class="form-input" placeholder="Full delivery address" formControlName="address">
+            <input type="text" class="form-input" placeholder="e.g., Delhi" formControlName="dropCity">
           </div>
         </div>
       </section>
 
-      <!-- Parcel Details -->
       <section class="form-section card">
         <h2 class="title-lg section-title">
           <span class="material-icons section-icon">inventory_2</span>
@@ -60,14 +38,33 @@
             <input type="number" class="form-input" placeholder="e.g., 500" formControlName="price">
           </div>
         </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Parcel Date</label>
+            <input type="date" class="form-input" formControlName="parcelDate">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Preferred Travel Date <span class="text-variant">— optional</span></label>
+            <input type="date" class="form-input" formControlName="preferredTravelDate">
+          </div>
+        </div>
         <div class="form-group">
           <label class="form-label">Description <span class="text-variant">— optional</span></label>
-          <input type="text" class="form-input" placeholder="Brief description of the parcel" formControlName="description">
+          <input type="text" class="form-input" placeholder="Brief description" formControlName="description">
+        </div>
+        <div class="form-group" *ngIf="prohibitedItems.length > 0">
+          <p class="body-sm text-variant">
+            Unsupported/restricted items:
+            <strong>{{ prohibitedItems.join(', ') }}</strong>
+          </p>
+          <p class="body-sm" style="color: var(--warning);" *ngIf="matchedProhibitedItems.length > 0">
+            Disclaimer: your description contains restricted item(s):
+            {{ matchedProhibitedItems.join(', ') }}
+          </p>
         </div>
       </section>
     </div>
 
-    <!-- Right: Summary -->
     <div class="summary-panel animate-fade-in-up delay-2">
       <div class="summary-card card card-elevated">
         <h3 class="title-lg" style="margin-bottom: var(--space-6)">Summary</h3>
@@ -84,27 +81,23 @@
             <span class="body-md text-variant">Price</span>
             <span class="title-md text-primary">₹{{ parcelForm.get('price')?.value || 0 }}</span>
           </div>
+          <div class="summary-row">
+            <span class="body-md text-variant">Parcel Date</span>
+            <span class="body-md">{{ parcelForm.get('parcelDate')?.value || '—' }}</span>
+          </div>
         </div>
 
         <button type="submit" class="btn btn-primary btn-lg btn-block" style="margin-top: var(--space-6)"
-          [disabled]="(creating$ | async)">
+          [disabled]="creating$ | async">
           <span class="material-icons">send</span>
           {{ (creating$ | async) ? 'Creating...' : 'Create Parcel' }}
         </button>
 
-        <!-- Error Display -->
-        <div *ngIf="error$ | async as error" class="error-message"
-          style="margin-top: var(--space-4); color: var(--error); font-size: 0.875rem">
-          {{ error }}
-        </div>
-      </div>
-
-      <div class="security-card card" style="margin-top: var(--space-5)">
-        <div class="security-header">
-          <span class="material-icons security-icon">verified_user</span>
-          <h4 class="title-sm">Secure Delivery</h4>
-        </div>
-        <p class="body-sm text-variant">Your parcel will be matched with verified travellers on the same route.</p>
+        @if (error$ | async; as error) {
+          <p class="error-message" style="margin-top: var(--space-4); color: var(--error); font-size: 0.875rem">
+            {{ error }}
+          </p>
+        }
       </div>
     </div>
   </form>

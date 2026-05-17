@@ -2,15 +2,10 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
-/**
- * Protects admin-only routes.
- * - Not logged in → redirect to /login
- * - Not verified → redirect to /otp-verification
- * - Not admin role → redirect to /dashboard/sender
- */
-export const adminGuard: CanActivateFn = (route, state) => {
+export const adminGuard: CanActivateFn = async () => {
   const authService = inject(AuthService);
   const router = inject(Router);
+  await authService.bootstrap();
 
   if (!authService.isLoggedIn) {
     router.navigate(['/login']);
@@ -25,7 +20,7 @@ export const adminGuard: CanActivateFn = (route, state) => {
   }
 
   if (authService.userRole !== 'admin') {
-    router.navigate(['/dashboard/sender']);
+    router.navigateByUrl(authService.getDashboardRoute(), { replaceUrl: true });
     return false;
   }
 

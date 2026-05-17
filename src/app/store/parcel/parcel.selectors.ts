@@ -33,25 +33,23 @@ export const selectError = createSelector(
   (state: ParcelState) => state.error
 );
 
-// Filtered selectors (matching backend status values)
-export const selectSearchingParcels = createSelector(
-  selectParcels,
-  (parcels) => parcels.filter((parcel) => parcel.status === 'searching')
+const hasStatus = (parcel: { status: string }, statuses: string[]) =>
+  statuses.includes(parcel.status);
+
+export const selectSearchingParcels = createSelector(selectParcels, (parcels) =>
+  parcels.filter((p) => hasStatus(p, ['PENDING', 'OPEN', 'searching']))
 );
 
-export const selectMatchedParcels = createSelector(
-  selectParcels,
-  (parcels) => parcels.filter((parcel) => parcel.status === 'matched')
+export const selectMatchedParcels = createSelector(selectParcels, (parcels) =>
+  parcels.filter((p) => hasStatus(p, ['MATCHED', 'ACCEPTED', 'matched']))
 );
 
-export const selectInTransitParcels = createSelector(
-  selectParcels,
-  (parcels) => parcels.filter((parcel) => parcel.status === 'in_transit')
+export const selectInTransitParcels = createSelector(selectParcels, (parcels) =>
+  parcels.filter((p) => hasStatus(p, ['IN_TRANSIT', 'PICKED_UP', 'in_transit']))
 );
 
-export const selectDeliveredParcels = createSelector(
-  selectParcels,
-  (parcels) => parcels.filter((parcel) => parcel.status === 'delivered')
+export const selectDeliveredParcels = createSelector(selectParcels, (parcels) =>
+  parcels.filter((p) => hasStatus(p, ['DELIVERED', 'delivered']))
 );
 
 export const selectParcelById = (id: string) =>

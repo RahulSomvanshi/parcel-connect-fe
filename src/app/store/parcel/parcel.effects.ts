@@ -17,7 +17,7 @@ export class ParcelEffects {
     this.actions$.pipe(
       ofType(ParcelActions.loadParcels),
       mergeMap(() =>
-        this.parcelService.getParcels().pipe(
+        this.parcelService.getMyParcels().pipe(
           map((parcels) => ParcelActions.loadParcelsSuccess({ parcels })),
           catchError((error) =>
             of(ParcelActions.loadParcelsFailure({ error: error.message || 'Failed to load parcels' }))

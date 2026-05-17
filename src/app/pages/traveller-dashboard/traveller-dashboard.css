@@ -1,4 +1,19 @@
-.traveller-dashboard { max-width: 1200px; }
+.traveller-dashboard {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .traveller-dashboard {
+    padding: 0 var(--space-1);
+  }
+
+  .earnings-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+}
 
 .dash-hero {
   background: linear-gradient(135deg, var(--tertiary) 0%, var(--tertiary-container) 100%);
@@ -125,4 +140,169 @@
   .hero-stats-row { flex-direction: column; }
   .stat-pill { min-width: auto; }
   .dash-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Trips Section ── */
+.trips-section-full { grid-column: 1 / -1; }
+
+.trips-list { display: flex; flex-direction: column; gap: var(--space-4); }
+
+.trip-card {
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+
+.trip-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.trip-route {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+.trip-city {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.trip-dot { font-size: 20px; }
+.trip-dot.from { color: var(--primary); }
+.trip-dot.to { color: var(--error); }
+
+.trip-line-wrap {
+  flex: 1;
+  min-width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trip-dashed-line {
+  flex: 1;
+  height: 2px;
+  background: repeating-linear-gradient(
+    to right,
+    var(--outline-variant) 0,
+    var(--outline-variant) 6px,
+    transparent 6px,
+    transparent 12px
+  );
+}
+
+.trip-meta {
+  display: flex;
+  gap: var(--space-6);
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--on-surface-variant);
+}
+
+.meta-icon { font-size: 18px; }
+
+.trip-status-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--outline-variant);
+  flex-wrap: wrap;
+}
+
+.status-select-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+}
+
+.status-select {
+  max-width: 220px;
+  padding: var(--space-2) var(--space-8) var(--space-2) var(--space-3);
+  font-size: 0.875rem;
+}
+
+.status-updating {
+  color: var(--primary);
+}
+
+.loading-state-inline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6);
+}
+
+.loading-spinner-sm {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--surface-container-highest);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.empty-trips {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-3);
+  padding: var(--space-10);
+}
+
+.empty-trips-icon { font-size: 48px; color: var(--outline); }
+
+/* ── Toast Notifications ── */
+.toast-success,
+.toast-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-xl);
+  margin-bottom: var(--space-4);
+  font-size: 0.9rem;
+  font-weight: 500;
+  animation: fadeInUp 0.3s ease;
+}
+
+.toast-success {
+  background-color: var(--tertiary-container);
+  color: var(--on-tertiary-container);
+}
+
+.toast-error {
+  background-color: var(--error-container);
+  color: var(--error);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.spin { animation: spin 0.7s linear infinite; }
+
+@media (max-width: 640px) {
+  .trip-top { flex-direction: column; align-items: flex-start; }
+  .trip-route { flex-direction: column; align-items: flex-start; }
+  .trip-line-wrap { display: none; }
+  .trip-status-row { flex-direction: column; align-items: flex-start; }
+  .status-select { max-width: 100%; }
 }

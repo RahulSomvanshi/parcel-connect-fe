@@ -7,23 +7,162 @@
     </div>
     <div class="hero-stats-row">
       <div class="stat-pill">
-        <p class="title-lg stat-val">24</p>
-        <p class="label-sm">SUCCESSFUL DELIVERIES</p>
+        <p class="title-lg stat-val">{{ stats?.completedDeliveries ?? '—' }}</p>
+        <p class="label-sm">COMPLETED</p>
       </div>
       <div class="stat-pill">
-        <p class="title-lg stat-val">03</p>
-        <p class="label-sm">UPCOMING TRIPS</p>
+        <p class="title-lg stat-val">{{ stats?.activeTrips ?? myTrips.length }}</p>
+        <p class="label-sm">ACTIVE TRIPS</p>
       </div>
       <div class="stat-pill accent">
-        <p class="title-lg stat-val">₹42,850</p>
-        <p class="label-sm">VERIFIED EARNINGS</p>
+        <p class="title-lg stat-val">{{ stats ? formatInr(stats.travellerEarnings) : '—' }}</p>
+        <p class="label-sm">YOUR SHARE (80%)</p>
       </div>
     </div>
   </section>
 
+  <!-- Toast Notifications -->
+  <div class="toast-success" *ngIf="updateSuccess">
+    <span class="material-icons">check_circle</span>
+    {{ updateSuccess }}
+  </div>
+  <div class="toast-error" *ngIf="updateError">
+    <span class="material-icons">error</span>
+    {{ updateError }}
+  </div>
+
   <div class="dash-grid">
+    <!-- My Trips with Status Update -->
+    <section class="dash-section animate-fade-in-up delay-1 trips-section-full">
+      <div class="section-header">
+        <h2 class="title-lg">{{ showAllTrips ? 'All Trips' : 'My Trips' }}</h2>
+        <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap">
+          <button
+            *ngIf="!showAllTrips && totalTrips > 3"
+            type="button"
+            class="btn btn-tertiary btn-sm"
+            (click)="viewAllTrips()"
+          >
+            View All
+          </button>
+          <button
+            *ngIf="showAllTrips"
+            type="button"
+            class="btn btn-tertiary btn-sm"
+            (click)="showRecentTrips()"
+          >
+            Show Recent
+          </button>
+          <a routerLink="/dashboard/add-travel-plan" class="btn btn-primary btn-sm">
+            <span class="material-icons">add</span> Add Trip
+          </a>
+        </div>
+      </div>
+
+      <div *ngIf="tripsLoading" class="loading-state-inline">
+        <div class="loading-spinner-sm"></div>
+        <span class="body-sm text-variant">Loading trips...</span>
+      </div>
+
+      <div *ngIf="!tripsLoading && myTrips.length === 0" class="empty-trips">
+        <span class="material-icons empty-trips-icon">flight_takeoff</span>
+        <p class="title-sm">No trips added yet</p>
+        <p class="body-sm text-variant">Add your first trip to start matching with parcels.</p>
+        <a routerLink="/dashboard/add-travel-plan" class="btn btn-primary btn-sm" style="margin-top: 1rem">
+          Add Travel Plan
+        </a>
+      </div>
+
+      <div class="trips-list" *ngIf="!tripsLoading && myTrips.length > 0">
+        @for (trip of myTrips; track trip._id) {
+          <div class="trip-card card">
+            <div class="trip-top">
+              <div class="trip-route">
+                <div class="trip-city">
+                  <span class="material-icons trip-dot from">trip_origin</span>
+                  <div>
+                    <span class="label-sm text-variant">FROM</span>
+                    <p class="title-sm">{{ trip.from }}</p>
+                  </div>
+                </div>
+                <div class="trip-line-wrap">
+                  <div class="trip-dashed-line"></div>
+                </div>
+                <div class="trip-city">
+                  <span class="material-icons trip-dot to">location_on</span>
+                  <div>
+                    <span class="label-sm text-variant">TO</span>
+                    <p class="title-sm">{{ trip.to }}</p>
+                  </div>
+                </div>
+              </div>
+              <span class="chip" [class]="getTripStatusClass(trip.status)">
+                {{ getTripStatusLabel(trip.status) }}
+              </span>
+            </div>
+
+            <div class="trip-meta">
+              <div class="meta-item">
+                <span class="material-icons meta-icon">calendar_today</span>
+                <span class="body-sm">{{ trip.travelDate | date:'d MMM yyyy' }}</span>
+              </div>
+              <div class="meta-item">
+                <span class="material-icons meta-icon">scale</span>
+                <span class="body-sm">{{ trip.availableWeight }} kg available</span>
+              </div>
+            </div>
+
+            <div class="trip-status-row">
+              <label class="form-label" style="margin:0; flex-shrink:0">Update Status:</label>
+              <div class="status-select-wrap">
+                <select
+                  class="form-input form-select status-select"
+                  [value]="trip.status || 'scheduled'"
+                  (change)="onStatusChange(trip, $any($event.target).value)"
+                  [disabled]="updatingTripId === trip._id"
+                >
+                  @for (opt of tripStatusOptions; track opt.value) {
+                    <option [value]="opt.value">{{ opt.label }}</option>
+                  }
+                </select>
+                <div class="status-updating" *ngIf="updatingTripId === trip._id">
+                  <span class="material-icons spin">refresh</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div
+        *ngIf="showAllTrips && totalTripPages > 1"
+        class="pagination"
+        style="display:flex;gap:0.5rem;align-items:center;justify-content:center;margin-top:1rem;flex-wrap:wrap"
+      >
+        <button
+          class="btn btn-secondary btn-sm"
+          type="button"
+          [disabled]="currentTripsPage === 1"
+          (click)="prevTripsPage()"
+        >
+          Prev
+        </button>
+        <span class="body-sm text-variant">
+          Page {{ currentTripsPage }} of {{ totalTripPages }} · {{ totalTrips }} total
+        </span>
+        <button
+          class="btn btn-secondary btn-sm"
+          type="button"
+          [disabled]="currentTripsPage === totalTripPages"
+          (click)="nextTripsPage()"
+        >
+          Next
+        </button>
+      </div>
+    </section>
+
     <!-- Your Deliveries -->
-    <section class="dash-section animate-fade-in-up delay-1">
+    <section class="dash-section animate-fade-in-up delay-2">
       <div class="section-header">
         <h2 class="title-lg">Your Deliveries</h2>
         <a routerLink="/dashboard/my-deliveries" class="btn btn-tertiary btn-sm">View All →</a>
@@ -48,7 +187,7 @@
               </div>
               <div class="journey-meta">
                 <span class="body-sm text-variant">{{ d.description || 'Parcel' }}</span>
-                <span class="chip" [class]="'chip-' + getStatusType(d.status)">{{ d.status }}</span>
+                <span class="chip" [class]="'chip-' + getStatusType(d.status)">{{ getParcelStatusLabel(d.status) }}</span>
               </div>
             </div>
           }
@@ -62,7 +201,7 @@
     </section>
 
     <!-- Suggested Matches -->
-    <section class="dash-section animate-fade-in-up delay-2">
+    <section class="dash-section animate-fade-in-up delay-3">
       <div class="section-header">
         <h2 class="title-lg">Suggested Matches</h2>
         <a routerLink="/dashboard/matching-parcels" class="btn btn-tertiary btn-sm">View All →</a>
@@ -73,43 +212,28 @@
             <span class="material-icons">inventory_2</span>
           </div>
           <div>
-            <h3 class="title-md">{{ suggestedMatch.title }}</h3>
-            <p class="body-sm text-variant">Est. Payout: <strong class="text-primary">{{ suggestedMatch.payout }}</strong></p>
+            <h3 class="title-md">{{ topMatching[0]?.description || 'Matching Parcel' }}</h3>
+            <p class="body-sm text-variant" *ngIf="topMatching[0] as p">
+              {{ p.pickup.city }} → {{ p.drop.city }} · Your earning:
+              <strong class="text-primary">{{ formatInr(getParcelEarnings(p.price).travellerEarning) }}</strong>
+            </p>
           </div>
         </div>
         <div class="match-demand">
           <span class="material-icons demand-icon">trending_up</span>
           <div>
             <p class="label-lg">Live Route Demand</p>
-            <p class="body-sm text-variant">{{ suggestedMatch.requests }} active requests on {{ suggestedMatch.route }}</p>
+            <p class="body-sm text-variant" *ngIf="topMatching[0] as p">
+              Company fee (20%): {{ formatInr(getParcelEarnings(p.price).companyShare) }} · Price ₹{{ p.price || 0 }}
+            </p>
+            <p class="body-sm text-variant" *ngIf="matchingLoading">Checking matching parcels...</p>
+            <p class="body-sm text-variant" *ngIf="!matchingLoading && !topMatching.length">Add a trip to see matching parcels on your route.</p>
           </div>
         </div>
         <button class="btn btn-primary btn-block" routerLink="/dashboard/matching-parcels">
           View Matching Parcels
           <span class="material-icons">arrow_forward</span>
         </button>
-      </div>
-
-      <!-- Earnings Summary -->
-      <div class="earnings-card card" style="margin-top: var(--space-5)">
-        <h3 class="title-md" style="margin-bottom: var(--space-4)">Earnings Overview</h3>
-        <div class="earnings-bars">
-          <div class="earnings-row">
-            <span class="body-sm">This Month</span>
-            <div class="bar-track"><div class="bar-fill" style="width:75%"></div></div>
-            <span class="label-lg">₹18,200</span>
-          </div>
-          <div class="earnings-row">
-            <span class="body-sm">Last Month</span>
-            <div class="bar-track"><div class="bar-fill secondary" style="width:60%"></div></div>
-            <span class="label-lg">₹14,650</span>
-          </div>
-          <div class="earnings-row">
-            <span class="body-sm">Pending</span>
-            <div class="bar-track"><div class="bar-fill tertiary" style="width:25%"></div></div>
-            <span class="label-lg">₹10,000</span>
-          </div>
-        </div>
       </div>
     </section>
   </div>

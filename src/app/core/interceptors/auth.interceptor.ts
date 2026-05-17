@@ -1,13 +1,13 @@
-import { HttpInterceptorFn } from '@angular/common/http';
+import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { catchError, throwError } from 'rxjs';
+import { AuthService } from '../services/auth.service';
 
-/**
- * Functional HTTP interceptor that attaches the JWT token
- * to all outgoing API requests (except auth endpoints).
- */
+/** Attaches JWT; on 401 clears session (no role-based redirects). */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = localStorage.getItem('token');
+  const authService = inject(AuthService);
+  const token = authService.getToken();
 
-  // Skip auth endpoints — they don't need a token
   const isAuthEndpoint =
     req.url.includes('/auth/login') ||
     req.url.includes('/auth/register') ||
@@ -15,14 +15,19 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     req.url.includes('/auth/resend-otp') ||
     req.url.includes('/auth/refresh-token');
 
-  if (token && !isAuthEndpoint) {
-    const cloned = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return next(cloned);
-  }
+  const authedReq =
+    token && !isAuthEndpoint
+      ? req.clone({
+          setHeaders: { Authorization: `Bearer ${token}` },
+        })
+      : req;
 
-  return next(req);
+  return next(authedReq).pipe(
+    catchError((err: HttpErrorResponse) => {
+      if (err.status === 401 && !isAuthEndpoint) {
+        authService.clearSession(false);
+      }
+      return throwError(() => err);
+    })
+  );
 };

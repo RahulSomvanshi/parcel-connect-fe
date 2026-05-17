@@ -68,10 +68,10 @@
                 <!-- <p class="body-sm text-variant">ID: {{ p.traveller.slice(-8) }}</p> -->
               </div>
             </div>
-            <div class="traveller-info" *ngIf="!p.traveller && p.status === 'searching'">
+            <div class="traveller-info" *ngIf="!p.traveller && (p.status === 'OPEN' || p.status === 'searching')">
               <span class="material-icons traveller-avatar">schedule</span>
               <div>
-                <p class="label-lg">Searching for Traveller</p>
+                <p class="label-lg">Open for Traveller</p>
                 <p class="body-sm text-variant">Broadcasted to network</p>
               </div>
             </div>
@@ -82,7 +82,7 @@
           </div>
 
           <!-- Actions -->
-          <div class="parcel-actions" *ngIf="p.status === 'searching'">
+          <div class="parcel-actions" *ngIf="p.status === 'OPEN' || p.status === 'searching'">
             <button class="btn btn-outline btn-sm" (click)="cancelParcel(p._id!)">
               <span class="material-icons">delete</span>
               Delete
@@ -102,6 +102,12 @@
           <span class="material-icons">add</span>
           Create Your First Parcel
         </a>
+      </div>
+
+      <div class="pagination" *ngIf="totalPages > 1" style="display:flex;gap:0.5rem;align-items:center;justify-content:center;margin-top:1rem;flex-wrap:wrap">
+        <button class="btn btn-secondary btn-sm" type="button" [disabled]="currentPage === 1" (click)="prevPage()">Prev</button>
+        <span class="body-sm text-variant">Page {{ currentPage }} of {{ totalPages }} · {{ totalParcels }} total</span>
+        <button class="btn btn-secondary btn-sm" type="button" [disabled]="currentPage === totalPages" (click)="nextPage()">Next</button>
       </div>
     </ng-container>
   </div>

@@ -7,9 +7,10 @@ import { AuthService } from '../services/auth.service';
  * - Not logged in → redirect to /login
  * - Logged in but NOT verified → redirect to /otp-verification
  */
-export const authGuard: CanActivateFn = (route, state) => {
+export const authGuard: CanActivateFn = async (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
+  await authService.bootstrap(true);
 
   if (!authService.isLoggedIn) {
     router.navigate(['/login']);
@@ -30,12 +31,23 @@ export const authGuard: CanActivateFn = (route, state) => {
  * Prevents authenticated+verified users from accessing login/register pages.
  * Already logged in → redirect to dashboard.
  */
-export const guestGuard: CanActivateFn = (route, state) => {
+export const guestGuard: CanActivateFn = async (route) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
+  const reauth =
+    route.queryParamMap.get('reauth') === '1' ||
+    route.queryParamMap.get('switch') === '1';
+
+  if (reauth && authService.isLoggedIn) {
+    authService.clearSession(true);
+    return true;
+  }
+
+  await authService.bootstrap();
+
   if (authService.isLoggedIn && authService.isVerified) {
-    router.navigate(['/dashboard']);
+    router.navigate([authService.getDashboardRoute()], { replaceUrl: true });
     return false;
   }
 

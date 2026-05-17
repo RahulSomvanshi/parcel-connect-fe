@@ -1,0 +1,324 @@
+/* ============================================
+   Zippora — Global responsive (mobile-first helpers)
+   ============================================ */
+
+/* Page shells */
+.sender-dashboard,
+.traveller-dashboard,
+.admin-dashboard,
+.create-parcel-page,
+.matching-page,
+.my-parcels-page,
+.my-deliveries-page,
+.travel-plan-page {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Prevent horizontal scroll across the app */
+html,
+body,
+app-root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Shared dashboard heroes */
+.dash-hero,
+.admin-hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-6);
+}
+
+/* ── Typography (tablet) ── */
+@media (max-width: 768px) {
+  .display-lg { font-size: 2.25rem; }
+  .display-md { font-size: 1.875rem; }
+  .display-sm { font-size: 1.5rem; }
+  .headline-lg { font-size: 1.5rem; }
+  .headline-md { font-size: 1.375rem; }
+  .headline-sm { font-size: 1.25rem; }
+
+  .dash-hero,
+  .admin-hero {
+    flex-direction: column;
+    align-items: stretch;
+    padding: var(--space-5) var(--space-4);
+    border-radius: var(--radius-xl);
+    margin-bottom: var(--space-5);
+  }
+
+  .dash-hero .hero-stats,
+  .dash-hero .hero-stats-row,
+  .admin-hero .hero-stats {
+    width: 100%;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .dash-hero .stat-card,
+  .admin-hero .stat-card,
+  .stat-pill {
+    min-width: 0;
+    width: 100%;
+    flex: 1 1 auto;
+  }
+
+  .page-header {
+    margin-bottom: var(--space-5);
+  }
+
+  .page-header h1 {
+    font-size: 1.5rem;
+    line-height: 1.25;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .section-header .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .card {
+    padding: var(--space-4);
+    border-radius: var(--radius-xl);
+  }
+
+  .tab-bar {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: var(--space-1);
+    padding: var(--space-1);
+    margin-bottom: var(--space-4);
+    scrollbar-width: none;
+  }
+
+  .tab-bar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab-btn {
+    flex: 0 0 auto;
+    padding: var(--space-2) var(--space-3);
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+
+  .match-top,
+  .parcel-header,
+  .parcel-footer,
+  .journey-meta,
+  .match-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .match-actions .btn {
+    width: 100%;
+  }
+
+  .match-payout {
+    text-align: left;
+  }
+
+  .parcel-route,
+  .journey-route {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .route-connector {
+    transform: rotate(90deg);
+  }
+
+  .filter-bar {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: var(--space-1);
+  }
+
+  .filter-chip {
+    flex-shrink: 0;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2);
+  }
+
+  .btn:not(.btn-sm) {
+    white-space: normal;
+    text-align: center;
+  }
+
+  .form-row,
+  .admin-form-row,
+  .summary-stats,
+  .delivery-details,
+  .impact-stats,
+  .hero-stats,
+  .hero-stats-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  .landing-grid,
+  .login-grid,
+  .otp-grid,
+  .travel-grid,
+  .form-grid,
+  .matching-grid,
+  .deliveries-grid,
+  .dash-grid,
+  .admin-overview-grid,
+  .admin-recent-grid {
+    grid-template-columns: 1fr !important;
+    gap: var(--space-4) !important;
+  }
+
+  .table-wrapper,
+  .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .data-table {
+    min-width: 560px !important;
+  }
+
+  .top-nav {
+    padding-left: var(--space-3) !important;
+    padding-right: var(--space-3) !important;
+  }
+
+  .sidebar {
+    width: min(84vw, 320px);
+  }
+
+  .summary-column,
+  .info-column,
+  .summary-panel {
+    position: static !important;
+    top: auto !important;
+  }
+}
+
+/* ── Typography (phone) ── */
+@media (max-width: 480px) {
+  .display-lg { font-size: 1.875rem; }
+  .display-md { font-size: 1.625rem; }
+  .display-sm { font-size: 1.375rem; }
+  .headline-lg { font-size: 1.375rem; }
+
+  .admin-hero .hero-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2);
+  }
+
+  .admin-hero .stat-card {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .admin-hero .stat-card .stat-icon {
+    font-size: 24px;
+  }
+
+  .tab-btn .tab-label {
+    display: none;
+  }
+
+  .tab-btn {
+    padding: var(--space-2);
+    min-width: 44px;
+  }
+
+  .tab-btn .material-icons {
+    margin: 0;
+  }
+
+  .otp-inputs {
+    gap: var(--space-2);
+  }
+
+  .otp-digit {
+    width: 40px;
+    height: 48px;
+    font-size: 1.125rem;
+  }
+
+  .breadcrumbs .breadcrumb-link,
+  .breadcrumbs .breadcrumb-current {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .card {
+    padding: var(--space-3) !important;
+  }
+
+  .data-table {
+    min-width: 480px !important;
+  }
+
+  .bottom-nav {
+    padding-left: var(--space-2);
+    padding-right: var(--space-2);
+  }
+
+  .bottom-nav-item {
+    padding-left: var(--space-2);
+    padding-right: var(--space-2);
+  }
+}
+
+/* Touch-friendly controls (not cards) */
+@media (max-width: 768px) {
+  .btn,
+  .nav-link,
+  .icon-btn,
+  .tab-btn,
+  .bottom-nav-item,
+  .filter-chip {
+    min-height: 44px;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  .btn-block {
+    width: 100%;
+  }
+}

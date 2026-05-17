@@ -206,6 +206,7 @@
 @media (max-width: 768px) {
   .sidebar {
     transform: translateX(-100%);
+    box-shadow: var(--shadow-float);
   }
 
   .sidebar.open {

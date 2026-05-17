@@ -16,17 +16,41 @@
           <div class="stat-item animate-fade-in-up delay-2">
             <span class="material-icons stat-icon">route</span>
             <div>
-              <p class="title-md stat-value">500+</p>
-              <p class="body-sm text-variant">Active delivery corridors across the country</p>
+              <p class="title-md stat-value">{{ publicStats?.activeRoutes ?? 0 }}</p>
+              <p class="body-sm text-variant">Active delivery routes on Zippora</p>
             </div>
           </div>
           <div class="stat-item animate-fade-in-up delay-3">
             <span class="material-icons stat-icon">groups</span>
             <div>
-              <p class="title-md stat-value">10,000+</p>
-              <p class="body-sm text-variant">Verified community moving items daily</p>
+              <p class="title-md stat-value">{{ publicStats?.totalParcels ?? 0 }}</p>
+              <p class="body-sm text-variant">Parcels moved through our network</p>
             </div>
           </div>
+        </div>
+
+        <!-- City Search Panel for Senders -->
+        <div class="city-search-panel animate-fade-in-up delay-4">
+          <p class="city-search-label">Send a parcel right now</p>
+          <div class="city-search-form" [formGroup]="cityForm">
+            <div class="city-input-group">
+              <span class="material-icons city-icon">trip_origin</span>
+              <input type="text" class="city-input" placeholder="From City (e.g. Mumbai)" formControlName="pickupCity">
+            </div>
+            <div class="city-search-divider"></div>
+            <div class="city-input-group">
+              <span class="material-icons city-icon">location_on</span>
+              <input type="text" class="city-input" placeholder="To City (e.g. Delhi)" formControlName="dropCity">
+            </div>
+          </div>
+          <button type="button" class="btn btn-block city-search-btn" (click)="onSendParcel()">
+            <span class="material-icons">local_shipping</span>
+            Send My Parcel
+          </button>
+          <button type="button" class="btn btn-outline btn-block" style="margin-top: 0.75rem" (click)="onBecomeTraveller()">
+            <span class="material-icons">flight</span>
+            Carry Parcels &amp; Earn
+          </button>
         </div>
       </div>
       <!-- Decorative elements -->
@@ -51,14 +75,14 @@
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">First Name</label>
-              <input type="text" class="form-input" placeholder="Rahul" formControlName="firstName">
+              <input type="text" class="form-input" placeholder="First Name" formControlName="firstName">
               <div class="error-message" *ngIf="registerForm.get('firstName')?.touched && registerForm.get('firstName')?.invalid">
                 First name is required
               </div>
             </div>
             <div class="form-group">
               <label class="form-label">Last Name</label>
-              <input type="text" class="form-input" placeholder="Sharma" formControlName="lastName">
+              <input type="text" class="form-input" placeholder="Last Name" formControlName="lastName">
               <div class="error-message" *ngIf="registerForm.get('lastName')?.touched && registerForm.get('lastName')?.invalid">
                 Last name is required
               </div>
@@ -66,7 +90,7 @@
           </div>
           <div class="form-group">
             <label class="form-label">Email Address</label>
-            <input type="email" class="form-input" placeholder="rahul@example.com" formControlName="email">
+            <input type="email" class="form-input" placeholder="Email Address" formControlName="email">
             <div class="error-message" *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid">
               Please enter a valid email
             </div>
@@ -93,8 +117,7 @@
             <select class="form-input form-select" formControlName="role">
               <option value="">Select your role</option>
               <option value="sender">Send Parcels</option>
-              <option value="traveller">Carry Parcels & Earn</option>
-              <option value="both">Both</option>
+              <option value="traveller">Carry Parcels &amp; Earn</option>
             </select>
             <div class="error-message" *ngIf="registerForm.get('role')?.touched && registerForm.get('role')?.invalid">
               Please select your role
@@ -118,7 +141,8 @@
         </form>
 
         <p class="body-sm form-footer text-variant">
-          Already have an account? <a routerLink="/login" class="link-primary">Login</a>
+          Already have an account?
+          <a routerLink="/login" [queryParams]="{ reauth: '1' }" class="link-primary">Login</a>
         </p>
       </div>
     </div>

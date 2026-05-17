@@ -9,41 +9,163 @@
       <div class="stat-card">
         <span class="material-icons stat-icon">people</span>
         <div>
-          <p class="display-sm stat-number">{{ (totalUsers$ | async) || 0 }}</p>
+          <p class="display-sm stat-number">{{ adminStats?.users?.total ?? (totalUsers$ | async) ?? 0 }}</p>
           <p class="label-sm text-variant-light">TOTAL USERS</p>
         </div>
       </div>
       <div class="stat-card">
         <span class="material-icons stat-icon">inventory_2</span>
         <div>
-          <p class="display-sm stat-number">{{ (totalParcels$ | async) || 0 }}</p>
+          <p class="display-sm stat-number">{{ adminStats?.parcels?.total ?? (totalParcels$ | async) ?? 0 }}</p>
           <p class="label-sm text-variant-light">TOTAL PARCELS</p>
         </div>
       </div>
+      <ng-container *ngIf="adminStats as s">
+        <div class="stat-card">
+          <span class="material-icons stat-icon">send</span>
+          <div>
+            <p class="display-sm stat-number">{{ s.users.senders }}</p>
+            <p class="label-sm text-variant-light">SENDERS</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="material-icons stat-icon">flight</span>
+          <div>
+            <p class="display-sm stat-number">{{ s.users.travellers }}</p>
+            <p class="label-sm text-variant-light">TRAVELLERS</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="material-icons stat-icon">local_shipping</span>
+          <div>
+            <p class="display-sm stat-number">{{ s.parcels.searching }}</p>
+            <p class="label-sm text-variant-light">OPEN</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="material-icons stat-icon">check_circle</span>
+          <div>
+            <p class="display-sm stat-number">{{ s.parcels.delivered }}</p>
+            <p class="label-sm text-variant-light">DELIVERED</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="material-icons stat-icon">route</span>
+          <div>
+            <p class="display-sm stat-number">{{ s.trips.active }}</p>
+            <p class="label-sm text-variant-light">ACTIVE TRIPS</p>
+          </div>
+        </div>
+        <div class="stat-card accent">
+          <span class="material-icons stat-icon">payments</span>
+          <div>
+            <p class="display-sm stat-number">{{ formatCurrency(s.revenue.companyShare) }}</p>
+            <p class="label-sm text-variant-light">COMPANY ({{ s.revenue.companyFeePercent }}%)</p>
+          </div>
+        </div>
+      </ng-container>
     </div>
+    <p *ngIf="dashboardLoading || statsLoading" class="body-sm text-variant-light" style="margin-top:0.5rem">Loading dashboard...</p>
+    <p *ngIf="statsError" class="body-sm" style="margin-top:0.5rem;color:var(--error)">
+      {{ statsError }} <button type="button" class="btn btn-tertiary btn-sm" (click)="retryStats()">Retry</button>
+    </p>
   </section>
 
   <!-- Tab Switcher -->
   <div class="tab-bar animate-fade-in-up delay-1">
-    <button
-      class="tab-btn"
-      [class.active]="activeTab === 'users'"
-      (click)="switchTab('users')"
-      id="tab-users"
-    >
-      <span class="material-icons">people</span>
-      All Users
+    <button class="tab-btn" [class.active]="activeTab === 'overview'" (click)="switchTab('overview')">
+      <span class="material-icons">dashboard</span>
+      <span class="tab-label">Overview</span>
     </button>
-    <button
-      class="tab-btn"
-      [class.active]="activeTab === 'parcels'"
-      (click)="switchTab('parcels')"
-      id="tab-parcels"
-    >
+    <button class="tab-btn" [class.active]="activeTab === 'users'" (click)="switchTab('users')" id="tab-users">
+      <span class="material-icons">people</span>
+      <span class="tab-label">All Users</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'parcels'" (click)="switchTab('parcels')" id="tab-parcels">
       <span class="material-icons">local_shipping</span>
-      All Parcels
+      <span class="tab-label">All Parcels</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'add-traveller'" (click)="switchTab('add-traveller')" id="tab-add-traveller">
+      <span class="material-icons">person_add</span>
+      <span class="tab-label">Add Traveller</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'add-trip'" (click)="switchTab('add-trip')" id="tab-add-trip">
+      <span class="material-icons">add_road</span>
+      <span class="tab-label">Add Trip</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'disclaimer'" (click)="switchTab('disclaimer')" id="tab-disclaimer">
+      <span class="material-icons">gpp_maybe</span>
+      <span class="tab-label">Disclaimer Items</span>
     </button>
   </div>
+
+  <!-- ═══════════════ OVERVIEW ═══════════════ -->
+  <section class="table-section animate-fade-in-up delay-2" *ngIf="activeTab === 'overview'">
+    <ng-container *ngIf="adminStats as s">
+      <div class="admin-overview-grid">
+        <div class="card admin-overview-card">
+          <h3 class="title-md">Parcel status</h3>
+          <div class="overview-rows">
+            <div class="overview-row"><span class="body-sm">Open</span><strong>{{ s.parcels.searching }}</strong></div>
+            <div class="overview-row"><span class="body-sm">Matched</span><strong>{{ s.parcels.matched }}</strong></div>
+            <div class="overview-row"><span class="body-sm">In transit</span><strong>{{ s.parcels.in_transit }}</strong></div>
+            <div class="overview-row"><span class="body-sm">Delivered</span><strong>{{ s.parcels.delivered }}</strong></div>
+          </div>
+        </div>
+        <div class="card admin-overview-card">
+          <h3 class="title-md">Revenue</h3>
+          <div class="overview-rows">
+            <div class="overview-row"><span class="body-sm">Total value</span><strong>{{ formatCurrency(s.revenue.total) }}</strong></div>
+            <div class="overview-row"><span class="body-sm">Delivered</span><strong>{{ formatCurrency(s.revenue.delivered) }}</strong></div>
+            <div class="overview-row"><span class="body-sm">Company (20%)</span><strong class="text-primary">{{ formatCurrency(s.revenue.companyShare) }}</strong></div>
+            <div class="overview-row"><span class="body-sm">Traveller share</span><strong>{{ formatCurrency(s.revenue.travellerShare) }}</strong></div>
+          </div>
+        </div>
+        <div class="card admin-overview-card">
+          <h3 class="title-md">Users</h3>
+          <div class="overview-rows">
+            <div class="overview-row"><span class="body-sm">Verified</span><strong>{{ s.users.verified }}</strong></div>
+            <div class="overview-row"><span class="body-sm">Unverified</span><strong>{{ s.users.unverified }}</strong></div>
+            <div class="overview-row"><span class="body-sm">Total trips</span><strong>{{ s.trips.total }}</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-recent-grid" style="margin-top:1.5rem">
+        <div class="card">
+          <h3 class="title-md" style="margin-bottom:1rem">Recent users</h3>
+          @for (u of s.recentUsers; track u._id) {
+            <div class="recent-row">
+              <div>
+                <p class="body-md">{{ u.fullName }}</p>
+                <p class="body-sm text-variant">{{ u.phone }} · {{ getRoleDisplay(u.role) }}</p>
+              </div>
+              <span class="chip" [class]="getVerifiedBadge(u.isVerified)">{{ getVerifiedDisplay(u.isVerified) }}</span>
+            </div>
+          }
+          @empty {
+            <p class="body-sm text-variant">No users yet.</p>
+          }
+        </div>
+        <div class="card">
+          <h3 class="title-md" style="margin-bottom:1rem">Recent parcels</h3>
+          @for (p of s.recentParcels; track p._id) {
+            <div class="recent-row">
+              <div>
+                <p class="body-md">{{ p.pickup.city }} → {{ p.drop.city }}</p>
+                <p class="body-sm text-variant">{{ getSenderName(p.sender) }} · {{ formatCurrency(p.price) }}</p>
+              </div>
+              <span class="chip" [class]="'chip-' + getStatusType(p.status)">{{ getStatusDisplay(p.status) }}</span>
+            </div>
+          }
+          @empty {
+            <p class="body-sm text-variant">No parcels yet.</p>
+          }
+        </div>
+      </div>
+    </ng-container>
+    <div *ngIf="statsLoading" class="loading-state"><div class="loading-spinner"></div><p class="body-md text-variant">Loading overview...</p></div>
+  </section>
 
   <!-- ═══════════════ USERS TABLE ═══════════════ -->
   <section class="table-section animate-fade-in-up delay-2" *ngIf="activeTab === 'users'">
@@ -280,5 +402,168 @@
         </ng-container>
       </ng-container>
     </ng-container>
+  </section>
+
+  <!-- ═══════════════ ADD TRAVELLER FORM ═══════════════ -->
+  <section class="table-section animate-fade-in-up delay-2" *ngIf="activeTab === 'add-traveller'">
+    <div class="admin-form-card card">
+      <div class="admin-form-header">
+        <span class="material-icons admin-form-icon">person_add</span>
+        <div>
+          <h2 class="title-lg">Add New Traveller</h2>
+          <p class="body-md text-variant">Create a traveller account that is auto-verified.</p>
+        </div>
+      </div>
+
+      <div class="toast-success" *ngIf="travellerSuccess">
+        <span class="material-icons">check_circle</span> {{ travellerSuccess }}
+      </div>
+      <div class="toast-error" *ngIf="travellerError">
+        <span class="material-icons">error</span> {{ travellerError }}
+      </div>
+
+      <form class="admin-form" [formGroup]="travellerForm" (ngSubmit)="onAddTraveller()">
+        <div class="admin-form-row">
+          <div class="form-group">
+            <label class="form-label">Full Name *</label>
+            <input class="form-input" type="text" placeholder="e.g. Rahul Sharma" formControlName="fullName">
+            <span class="error-message" *ngIf="travellerForm.get('fullName')?.touched && travellerForm.get('fullName')?.invalid">Full name is required</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number *</label>
+            <input class="form-input" type="tel" placeholder="e.g. 9876543210" formControlName="phone">
+            <span class="error-message" *ngIf="travellerForm.get('phone')?.touched && travellerForm.get('phone')?.invalid">Phone is required</span>
+          </div>
+        </div>
+        <div class="admin-form-row">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input class="form-input" type="email" placeholder="e.g. rahul@email.com" formControlName="email">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password *</label>
+            <input class="form-input" type="password" placeholder="Min 6 characters" formControlName="password">
+            <span class="error-message" *ngIf="travellerForm.get('password')?.touched && travellerForm.get('password')?.invalid">Password must be at least 6 characters</span>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" [disabled]="addingTraveller">
+          <span *ngIf="!addingTraveller"><span class="material-icons">person_add</span> Add Traveller</span>
+          <span *ngIf="addingTraveller"><span class="material-icons spin">refresh</span> Adding...</span>
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ═══════════════ ADD TRIP FORM ═══════════════ -->
+  <section class="table-section animate-fade-in-up delay-2" *ngIf="activeTab === 'add-trip'">
+    <div class="admin-form-card card">
+      <div class="admin-form-header">
+        <span class="material-icons admin-form-icon">add_road</span>
+        <div>
+          <h2 class="title-lg">Add Travel Plan</h2>
+          <p class="body-md text-variant">Create a trip for an existing traveller user.</p>
+        </div>
+      </div>
+
+      <div class="toast-success" *ngIf="tripSuccess">
+        <span class="material-icons">check_circle</span> {{ tripSuccess }}
+      </div>
+      <div class="toast-error" *ngIf="tripError">
+        <span class="material-icons">error</span> {{ tripError }}
+      </div>
+
+      <form class="admin-form" [formGroup]="tripForm" (ngSubmit)="onAddTrip()">
+        <div class="form-group">
+          <label class="form-label">Traveller User *</label>
+          <select class="form-input form-select" formControlName="userId">
+            <option value="">Select a traveller</option>
+            @for (t of travellers; track t._id) {
+              <option [value]="t._id">{{ t.fullName }} — {{ t.phone }}</option>
+            }
+          </select>
+          <span class="error-message" *ngIf="tripForm.get('userId')?.touched && tripForm.get('userId')?.invalid">Please select a traveller</span>
+        </div>
+        <div class="admin-form-row">
+          <div class="form-group">
+            <label class="form-label">From City *</label>
+            <input class="form-input" type="text" placeholder="e.g. Mumbai" formControlName="from">
+            <span class="error-message" *ngIf="tripForm.get('from')?.touched && tripForm.get('from')?.invalid">From city is required</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">To City *</label>
+            <input class="form-input" type="text" placeholder="e.g. Delhi" formControlName="to">
+            <span class="error-message" *ngIf="tripForm.get('to')?.touched && tripForm.get('to')?.invalid">To city is required</span>
+          </div>
+        </div>
+        <div class="admin-form-row">
+          <div class="form-group">
+            <label class="form-label">Travel Date *</label>
+            <input class="form-input" type="date" formControlName="travelDate">
+            <span class="error-message" *ngIf="tripForm.get('travelDate')?.touched && tripForm.get('travelDate')?.invalid">Travel date is required</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Vehicle Type *</label>
+            <select class="form-input form-select" formControlName="vehicleType">
+              <option value="">Select vehicle</option>
+              <option value="bus">Bus</option>
+              <option value="train">Train</option>
+              <option value="car">Car</option>
+            </select>
+            <span class="error-message" *ngIf="tripForm.get('vehicleType')?.touched && tripForm.get('vehicleType')?.invalid">Vehicle type is required</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Available Weight (kg) *</label>
+          <input class="form-input" type="number" placeholder="e.g. 10" formControlName="availableWeight" min="0.1" step="0.1">
+          <span class="error-message" *ngIf="tripForm.get('availableWeight')?.touched && tripForm.get('availableWeight')?.invalid">Weight must be greater than 0</span>
+        </div>
+        <button type="submit" class="btn btn-primary" [disabled]="addingTrip">
+          <span *ngIf="!addingTrip"><span class="material-icons">add_road</span> Add Trip</span>
+          <span *ngIf="addingTrip"><span class="material-icons spin">refresh</span> Adding...</span>
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ═══════════════ DISCLAIMER ITEMS ═══════════════ -->
+  <section class="table-section animate-fade-in-up delay-2" *ngIf="activeTab === 'disclaimer'">
+    <div class="admin-form-card card">
+      <div class="admin-form-header">
+        <span class="material-icons admin-form-icon">gpp_maybe</span>
+        <div>
+          <h2 class="title-lg">Unsupported Parcel Items</h2>
+          <p class="body-md text-variant">Manage extra disclaimer keywords shown during parcel creation.</p>
+        </div>
+      </div>
+
+      <div class="toast-success" *ngIf="disclaimerSuccess">
+        <span class="material-icons">check_circle</span> {{ disclaimerSuccess }}
+      </div>
+      <div class="toast-error" *ngIf="disclaimerError">
+        <span class="material-icons">error</span> {{ disclaimerError }}
+      </div>
+
+      <form class="admin-form" [formGroup]="disclaimerForm" (ngSubmit)="saveProhibitedItems()">
+        <div class="form-group">
+          <label class="form-label">Custom unsupported items (comma separated)</label>
+          <textarea
+            class="form-input form-textarea"
+            rows="3"
+            formControlName="customItemsText"
+            placeholder="e.g. tobacco, lithium battery, paint thinner"
+          ></textarea>
+        </div>
+        <div class="form-group" *ngIf="prohibitedData">
+          <p class="body-sm text-variant">
+            Active items:
+            <strong>{{ prohibitedData.allItems.join(', ') }}</strong>
+          </p>
+        </div>
+        <button type="submit" class="btn btn-primary" [disabled]="savingDisclaimer">
+          <span *ngIf="!savingDisclaimer"><span class="material-icons">save</span> Save Disclaimer Items</span>
+          <span *ngIf="savingDisclaimer"><span class="material-icons spin">refresh</span> Saving...</span>
+        </button>
+      </form>
+    </div>
   </section>
 </div>

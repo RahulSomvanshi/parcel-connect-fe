@@ -8,6 +8,7 @@ import { RouterLink } from '@angular/router';
 import { Parcel } from '../../core/services/parcel.service';
 import * as ParcelActions from '../../store/parcel/parcel.actions';
 import * as ParcelSelectors from '../../store/parcel/parcel.selectors';
+import { parcelStatusBadge, parcelStatusLabel } from '../../core/utils/parcel-status.util';
 
 @Component({
   selector: 'app-sender-dashboard',
@@ -58,11 +59,22 @@ export class SenderDashboard implements OnInit, OnDestroy {
       }))
     );
 
-    // Get recent parcels (last 5)
     this.recentParcels$ = this.parcels$.pipe(
       map(parcels => parcels.slice(0, 5))
     );
+
+    this.activeParcels$ = this.parcels$.pipe(
+      map(parcels =>
+        parcels.filter((p) =>
+          ['ACCEPTED', 'PICKED_UP', 'IN_TRANSIT', 'matched', 'in_transit'].includes(
+            p.status
+          )
+        )
+      )
+    );
   }
+
+  activeParcels$!: Observable<Parcel[]>;
 
   ngOnDestroy() {
     this.destroy$.next();
@@ -70,23 +82,11 @@ export class SenderDashboard implements OnInit, OnDestroy {
   }
 
   getStatusType(status: string): string {
-    switch (status) {
-      case 'searching': return 'secondary';
-      case 'matched': return 'primary';
-      case 'in_transit': return 'warning';
-      case 'delivered': return 'success';
-      default: return 'secondary';
-    }
+    return parcelStatusBadge(status);
   }
 
   getStatusDisplay(status: string): string {
-    switch (status) {
-      case 'searching': return 'Searching';
-      case 'matched': return 'Matched';
-      case 'in_transit': return 'In Transit';
-      case 'delivered': return 'Delivered';
-      default: return status;
-    }
+    return parcelStatusLabel(status);
   }
 
   formatDate(dateString: string): string {
@@ -112,5 +112,20 @@ export class SenderDashboard implements OnInit, OnDestroy {
       currency: 'INR',
       minimumFractionDigits: 0
     }).format(amount);
+  }
+
+  getProgress(status: string): number {
+    switch (status) {
+      case 'searching': return 15;
+      case 'OPEN': return 15;
+      case 'matched': return 45;
+      case 'ACCEPTED': return 45;
+      case 'PICKED_UP': return 60;
+      case 'in_transit': return 75;
+      case 'IN_TRANSIT': return 75;
+      case 'delivered': return 100;
+      case 'DELIVERED': return 100;
+      default: return 0;
+    }
   }
 }

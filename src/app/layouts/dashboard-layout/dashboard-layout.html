@@ -1,10 +1,16 @@
 <div class="dashboard-shell">
-  <app-sidebar [userType]="userType" />
+  <div
+    class="sidebar-overlay"
+    [class.active]="sidebarOpen"
+    (click)="closeSidebar()"
+    aria-hidden="true"
+  ></div>
+  <app-sidebar [isOpen]="sidebarOpen" (menuClose)="closeSidebar()" />
   <div class="dashboard-main">
-    <app-top-nav [breadcrumbs]="breadcrumbs" />
+    <app-top-nav [breadcrumbs]="breadcrumbs" (menuToggle)="toggleSidebar()" />
     <main class="dashboard-content">
       <router-outlet />
     </main>
   </div>
-  <app-bottom-nav [userType]="userType" />
+  <app-bottom-nav />
 </div>

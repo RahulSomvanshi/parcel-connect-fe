@@ -1,9 +1,9 @@
-<aside class="sidebar">
+<aside class="sidebar" [class.open]="isOpen">
   <div class="sidebar-header">
     <div class="logo-mark">
       <span class="material-icons logo-icon">local_shipping</span>
     </div>
-    <h2 class="logo-text">ParcelConnect</h2>
+    <h2 class="logo-text">Zippora</h2>
   </div>
 
   <div class="sidebar-user">
@@ -13,43 +13,19 @@
     <div class="user-info">
       <p class="user-greeting label-sm">Welcome back</p>
       <p class="user-type title-sm">{{ userName }}</p>
+      <span class="chip chip-primary" style="margin-top: 0.25rem">{{ roleLabel }}</span>
     </div>
   </div>
 
-  <!-- Mode Switcher -->
-  <div class="mode-switcher">
-    <a routerLink="/dashboard/sender"
-       class="mode-btn"
-       [class.active]="userType === 'sender'">
-      <span class="material-icons">inventory_2</span>
-      Sender
-    </a>
-    <a routerLink="/dashboard/traveller"
-       class="mode-btn"
-       [class.active]="userType === 'traveller'">
-      <span class="material-icons">flight</span>
-      Traveller
-    </a>
-    @if (isAdmin) {
-      <a routerLink="/dashboard/admin"
-         class="mode-btn mode-btn-admin"
-         [class.active]="userType === 'admin'">
-        <span class="material-icons">shield</span>
-        Admin
-      </a>
-    }
-  </div>
-
   <nav class="sidebar-nav">
-    <p class="nav-section-label label-sm">
-      {{ userType === 'admin' ? 'ADMIN MENU' : (userType === 'sender' ? 'SENDER MENU' : 'TRAVELLER MENU') }}
-    </p>
+    <p class="nav-section-label label-sm">{{ roleLabel | uppercase }} MENU</p>
     @for (link of links; track link.path) {
       <a
         [routerLink]="link.path"
         routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: true }"
         class="nav-link"
+        (click)="onNavClick()"
       >
         <span class="material-icons nav-icon">{{ link.icon }}</span>
         <span class="nav-label">{{ link.label }}</span>
@@ -58,7 +34,7 @@
   </nav>
 
   <div class="sidebar-footer">
-    <a (click)="logout()" class="nav-link nav-link-logout">
+    <a (click)="onNavClick(); logout()" class="nav-link nav-link-logout">
       <span class="material-icons nav-icon">logout</span>
       <span class="nav-label">Logout</span>
     </a>

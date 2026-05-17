@@ -62,7 +62,7 @@
         </button>
 
         <div class="otp-footer">
-          <a routerLink="/login" class="body-sm link-primary">← Back to Login</a>
+          <a routerLink="/login" [queryParams]="{ reauth: '1' }" class="body-sm link-primary">← Back to Login</a>
           <div class="otp-links">
             <a routerLink="/landing" class="body-sm text-variant">Privacy Policy</a>
             <span class="body-sm text-variant">•</span>

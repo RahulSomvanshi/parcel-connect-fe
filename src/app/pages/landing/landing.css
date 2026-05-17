@@ -95,6 +95,86 @@
   color: rgba(255, 255, 255, 0.75);
 }
 
+/* ── City Search Panel ── */
+.city-search-panel {
+  margin-top: var(--space-8);
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-5) var(--space-5) var(--space-5);
+  max-width: 440px;
+}
+
+.city-search-label {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: var(--space-3);
+}
+
+.city-search-form {
+  background: rgba(255,255,255,0.95);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  margin-bottom: var(--space-3);
+}
+
+.city-input-group {
+  display: flex;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  gap: var(--space-3);
+}
+
+.city-icon {
+  font-size: 20px;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.city-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--on-surface);
+}
+
+.city-input::placeholder {
+  color: var(--outline);
+}
+
+.city-search-divider {
+  height: 1px;
+  background: var(--outline-variant);
+  margin: 0 var(--space-4);
+}
+
+.city-search-btn {
+  background: #fff;
+  color: var(--primary);
+  font-weight: 700;
+  border-radius: var(--radius-xl);
+  padding: var(--space-3) var(--space-5);
+  font-size: 0.9375rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  transition: all 0.25s ease;
+}
+
+.city-search-btn:hover {
+  background: var(--primary-fixed);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(143,78,0,0.2);
+}
+
 /* Decorations */
 .hero-decoration {
   position: absolute;
@@ -266,6 +346,18 @@
 }
 
 @media (max-width: 640px) {
+  .city-search-panel {
+    max-width: 100%;
+  }
+
+  .city-search-form {
+    margin-bottom: var(--space-4);
+  }
+
+  .city-search-btn,
+  .city-search-panel .btn-outline {
+    width: 100%;
+  }
   .landing-hero {
     padding: var(--space-8) var(--space-4);
   }

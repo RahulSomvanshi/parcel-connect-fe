@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterLink, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +19,8 @@ export class Login {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private toast: ToastService
   ) { }
 
   ngOnInit() {
@@ -56,16 +58,23 @@ export class Login {
         }
 
         // ✅ Verified user → go to appropriate dashboard
-        if (this.authService.userRole === 'admin') {
-          this.router.navigate(['/dashboard/admin']);
-        } else {
-          this.router.navigate(['/dashboard']);
-        }
+        this.router.navigate([this.authService.getPostAuthRoute()]);
       },
 
       error: (err) => {
         this.isLoading = false;
-        alert(err.error?.message || 'Login failed');
+
+        if (err.error?.isVerified === false) {
+          this.router.navigate(['/otp-verification'], {
+            state: {
+              phone: err.error?.phone || payload.phone,
+              role: err.error?.role,
+            },
+          });
+          return;
+        }
+
+        this.toast.error(err.error?.message || 'Login failed');
       }
     });
   }

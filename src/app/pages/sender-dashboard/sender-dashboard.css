@@ -15,7 +15,8 @@
   border-radius: var(--radius-2xl);
   padding: var(--space-8) var(--space-10);
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
+  align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-8);
   margin-bottom: var(--space-8);

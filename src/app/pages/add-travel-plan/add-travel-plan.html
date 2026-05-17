@@ -84,14 +84,34 @@
       </form>
     </div>
 
-    <!-- Info Cards -->
+    <!-- Earnings sidebar (dynamic) -->
     <div class="info-column animate-fade-in-up delay-2">
       <div class="info-card card card-elevated">
         <div class="info-icon-circle earnings">
           <span class="material-icons">payments</span>
         </div>
-        <h3 class="title-md">Earn as you travel</h3>
-        <p class="body-md text-variant">Average travelers earn up to <strong class="text-primary">₹2,500</strong> per intercity trip by carrying parcels.</p>
+        <h3 class="title-md">Trip Earnings Preview</h3>
+        @if (previewLoading) {
+          <p class="body-sm text-variant">Calculating for your route...</p>
+        } @else if (earningsPreview) {
+          <div class="earnings-breakdown">
+            <p class="body-sm text-variant">{{ earningsPreview.matchingCount }} matching parcel(s) on this route</p>
+            <div class="summary-row" style="margin-top:0.75rem">
+              <span class="body-sm text-variant">Total parcel value</span>
+              <span class="body-md">{{ formatInr(earningsPreview.totalParcelValue) }}</span>
+            </div>
+            <div class="summary-row">
+              <span class="body-sm text-variant">Company share ({{ earningsPreview.companyFeePercent }}%)</span>
+              <span class="body-md">{{ formatInr(earningsPreview.companyShare) }}</span>
+            </div>
+            <div class="summary-row">
+              <span class="body-sm"><strong>Your trip earning ({{ earningsPreview.travellerSharePercent }}%)</strong></span>
+              <span class="title-md text-primary">{{ formatInr(earningsPreview.tripEarning) }}</span>
+            </div>
+          </div>
+        } @else {
+          <p class="body-md text-variant">Enter departure and arrival cities to see potential earnings. <strong>{{ 20 }}%</strong> goes to the company; you keep <strong>{{ 80 }}%</strong>.</p>
+        }
       </div>
 
       <div class="info-card card card-elevated">

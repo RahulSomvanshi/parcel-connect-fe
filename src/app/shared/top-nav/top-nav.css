@@ -80,3 +80,18 @@
   border-radius: var(--radius-full);
   background-color: var(--primary-container);
 }
+
+@media (max-width: 768px) {
+  .top-nav {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .top-nav-right .icon-btn:last-child {
+    display: none;
+  }
+
+  .breadcrumbs {
+    max-width: calc(100vw - 140px);
+    overflow: hidden;
+  }
+}
